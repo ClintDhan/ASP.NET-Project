@@ -1,0 +1,93 @@
+*{
+    padding: 0;
+    margin: 0;
+    font-family: Inter;
+}
+
+
+.form-main {
+    display: grid;
+    grid-template-columns: 37.5rem 33.125rem;
+    grid-template-rows: 32.5rem;
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+
+.img-gif {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-login, .form-sigin {
+    border-radius: 20px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    text-align: center;
+    position: absolute;
+    transform: translateY(-120%);
+    animation: formAnimate 1s ease-in-out forwards;
+}
+.form-login, .form-sigin {
+    position: relative;
+}
+
+h2 {
+    margin-top: 3.375rem;
+    margin-bottom: 1.625rem;
+    font-size: 24px;
+    font-weight: 600;
+}
+input, select {
+    width: 18.75rem;
+    height: 2.5rem;
+    border: 1px solid #CEC5C5;
+}
+
+input:checked {
+    border: 1px solid #D2DF46;
+}
+
+.input-text {
+    margin-bottom: 1.125rem;
+}
+
+.input-pass {
+    margin-bottom: 5.188rem;
+}
+
+.input-submit {
+    background-color: #A0D15B;
+    color: #FFFFFF;
+    border: none;
+    cursor: pointer;
+    height: 3.125rem;
+    transition: background-color .2s ease-in-out;
+}
+
+.form-link {
+    font-size: 12px;
+    margin-top: 1.25rem;
+}
+.input-pass-signin {
+    margin-bottom: 1.125rem;
+}
+select {
+    margin-bottom: 1.125rem;
+}
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: #D2DF46; /* Optional: Change the border color as well */
+}
+input[type="submit"]:hover {
+    background-color:#D2DF46 ;
+}
+
+@keyframes formAnimate {
+    from{
+        transform: translateY(-120%);
+    }
+    to {
+        transform: translateY(0%);
+    }
+}
