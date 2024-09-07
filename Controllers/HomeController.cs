@@ -22,6 +22,10 @@ public class HomeController : Controller
     {
         return View();
     }
+     public IActionResult AdminLayout()
+    {
+        return View("~/Views/Home/Admin/AdminLayout.cshtml");
+    }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

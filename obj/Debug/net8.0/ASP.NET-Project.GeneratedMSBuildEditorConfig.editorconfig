@@ -18,12 +18,20 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = D:\xampp4\htdocs\ASP.NET-Project
 build_property._RazorSourceGeneratorDebug = 
 
+[D:/xampp4/htdocs/ASP.NET-Project/Views/Home/Admin/AdminLayout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBZG1pblxBZG1pbkxheW91dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/xampp4/htdocs/ASP.NET-Project/Views/Home/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/xampp4/htdocs/ASP.NET-Project/Views/Home/Signup.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxTaWdudXAuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/xampp4/htdocs/ASP.NET-Project/Views/Home/User/UserLayout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxVc2VyXFVzZXJMYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/xampp4/htdocs/ASP.NET-Project/Views/Shared/Error.cshtml]

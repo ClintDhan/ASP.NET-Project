@@ -91,3 +91,36 @@ input[type="submit"]:hover {
         transform: translateY(0%);
     }
 }
+
+.sidebars{
+    height: 100vh;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.nav-link {
+    color: black;
+    font-weight: 600;
+    height: 3.125rem;
+    padding-top: 1.125rem;
+    padding-bottom: 1.188rem;
+    font-size: .75rem;
+    padding-left: 2.5rem;
+}
+
+.title{
+    color: black;
+    font-weight: 900;
+}
+
+.nav {
+    margin-top: 2.75rem;
+}
+
+.admin-tag {
+    color: black;
+    font-size: 600;
+}
+
+.active {
+    background-color: #A0D15B !important;
+}
