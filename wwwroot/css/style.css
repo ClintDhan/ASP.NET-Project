@@ -94,7 +94,9 @@ input[type="submit"]:hover {
 
 .sidebars{
     height: 100vh;
+    width: 18.75rem;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    float: left;
 }
 
 .nav-link {
@@ -113,7 +115,7 @@ input[type="submit"]:hover {
 }
 
 .nav {
-    margin-top: 2.75rem;
+    margin-top: 1.5rem;
 }
 
 .admin-tag {
@@ -123,4 +125,38 @@ input[type="submit"]:hover {
 
 .active {
     background-color: #A0D15B !important;
+}
+
+/* Admin Dashboard */
+
+.header-color {
+    height: 4.375rem;
+    width: 100%;
+    background-color: #A0D15B;
+}
+
+.dashboard-table {
+    border-collapse: collapse;
+    width: 61.75rem;
+}
+
+.dashboard-table th, .dashboard-table td {
+    border: 1px solid #ddd; 
+    padding: 8px; 
+}
+
+.dashboard-portion {
+    display: grid;
+    grid-template-columns: 19.063rem 18.75rem 19.063rem;
+    grid-template-rows: 5rem;
+    margin-top: 4.375rem;
+    margin-left: 2.5rem;
+    margin-right: 2.5rem;
+}
+
+.dashboard-portion > * {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: lightgray;
 }

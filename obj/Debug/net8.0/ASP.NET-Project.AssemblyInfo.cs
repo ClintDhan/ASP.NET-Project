@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ASP.NET-Project")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4fd58999d160ceef63b6a0dcefd4a30f3fc87a74")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0991bd6806c947d15c9390bcf8477efa7418977c")]
 [assembly: System.Reflection.AssemblyProductAttribute("ASP.NET-Project")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ASP.NET-Project")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

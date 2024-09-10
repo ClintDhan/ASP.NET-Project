@@ -22,10 +22,11 @@ public class HomeController : Controller
     {
         return View();
     }
-     public IActionResult AdminLayout()
+     public IActionResult AdminDashboard()
     {
-        return View("~/Views/Home/Admin/AdminLayout.cshtml");
+        return View("~/Views/Home/Admin/AdminDashboard.cshtml");
     }
+
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
