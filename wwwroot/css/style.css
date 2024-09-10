@@ -94,7 +94,7 @@ input[type="submit"]:hover {
 
 .sidebars{
     height: 100vh;
-    width: 18.75rem;
+    width: 21.962vw;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     padding: 0 0 0 0;
 }
@@ -127,18 +127,21 @@ input[type="submit"]:hover {
 .active {
     background-color: #A0D15B !important;
 }
+.flex-admin {
+    display: flex;
+}
 
 /* Admin Dashboard */
 
 .header-color {
     height: 4.375rem;
-    width: 78vw;
+    width: 78.038vw;
     background-color: #A0D15B;
 }
 
 .dashboard-table {
     border-collapse: collapse;
-    width: 61.75rem;
+    width: 72.328vw;
 }
 
 .dashboard-table th, .dashboard-table td {
@@ -148,11 +151,11 @@ input[type="submit"]:hover {
 
 .dashboard-portion {
     display: grid;
-    grid-template-columns: 19.063rem 18.75rem 19.063rem;
+    grid-template-columns: 22.329vw 21.962vw 22.329vw;
     grid-template-rows: 5rem;
     margin-top: 4.375rem;
-    margin-left: 2.5rem;
-    gap: 2.375rem;
+    margin-left: 2.928vw;
+    gap: 2.782vw;
 }
 
 .dashboard-portion > * {
@@ -160,8 +163,9 @@ input[type="submit"]:hover {
     justify-content: center;
     align-items: center;
     background-color: lightgray;
+    border-radius: 8px;
 }
 
 .dashboard-table-container {
-    margin-left: 2.5rem;
+    margin-left: 2.928vw;
 }
