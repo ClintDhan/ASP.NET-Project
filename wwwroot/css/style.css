@@ -96,8 +96,9 @@ input[type="submit"]:hover {
     height: 100vh;
     width: 18.75rem;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-    float: left;
+    padding: 0 0 0 0;
 }
+
 
 .nav-link {
     color: black;
@@ -131,7 +132,7 @@ input[type="submit"]:hover {
 
 .header-color {
     height: 4.375rem;
-    width: 100%;
+    width: 78vw;
     background-color: #A0D15B;
 }
 
@@ -151,7 +152,7 @@ input[type="submit"]:hover {
     grid-template-rows: 5rem;
     margin-top: 4.375rem;
     margin-left: 2.5rem;
-    margin-right: 2.5rem;
+    gap: 2.375rem;
 }
 
 .dashboard-portion > * {
@@ -159,4 +160,8 @@ input[type="submit"]:hover {
     justify-content: center;
     align-items: center;
     background-color: lightgray;
+}
+
+.dashboard-table-container {
+    margin-left: 2.5rem;
 }

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>@RenderSection("Title", required: false)</title>
+    <title>@RenderSection("Title", required: false)</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
@@ -15,54 +16,61 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/css/style.css"> <!-- Adjust path as necessary -->
 </head>
-<body>
-    <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-light sidebars">
-        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-            <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-            <span class="fs-4 title">TMS</span>
-        </a>
-        <hr style="mt-5">
-        <ul class="nav nav-pills flex-column mb-auto">
-            <li>
-                <a href="/Home/AdminDashboard" class="nav-link active">
-                    <i class="bi bi-speedometer2"></i>
-                    Dashboard
-                </a>
-            </li>
-            <li>
-                <a href="#" class="nav-link">
-                    <i class="bi bi-table"></i>
-                    Projects
-                </a>
-            </li>
-            <li>
-                <a href="#" class="nav-link">
-                    <i class="bi bi-grid"></i>
-                    Tasks
-                </a>
-            </li>
-            <li>
-                <a href="#" class="nav-link">
-                    <i class="bi bi-people-circle"></i>
-                    Users
-                </a>
-            </li>
-        </ul>
-        <hr>
-        <div class="dropdown">
-            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-                <strong class="admin-tag">Admin</strong>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                
-                <li><a class="dropdown-item" href="/Home/Login">Sign out</a></li>
-            </ul>
-        </div>
-    </div>
 
-    <div class="to-right">
-    @RenderBody()
+<body>
+    <div class="d-flex">
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-light sidebars">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <svg class="bi pe-none me-2" width="40" height="32">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+                <span class="fs-4 title">TMS</span>
+            </a>
+            <hr style="mt-5">
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li>
+                    <a href="/Home/AdminDashboard" class="nav-link active">
+                        <i class="bi bi-speedometer2"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-table"></i>
+                        Projects
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-grid"></i>
+                        Tasks
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-people-circle"></i>
+                        Users
+                    </a>
+                </li>
+            </ul>
+            <hr>
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+                    <strong class="admin-tag">Admin</strong>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+
+                    <li><a class="dropdown-item" href="/Home/Login">Sign out</a></li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="to-right">
+            @RenderBody()
+        </div>
     </div>
 
     <!-- Bootstrap JS -->
@@ -70,4 +78,5 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 </body>
+
 </html>
