@@ -2,3 +2,8 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+
+let adminDashboard = document.getElementById('adminDashboard');
+adminDashboard.addEventListener("click", function(){
+    adminDashboard.classList.add("active");
+})

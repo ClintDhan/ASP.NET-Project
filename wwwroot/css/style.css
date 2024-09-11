@@ -103,10 +103,10 @@ input[type="submit"]:hover {
 .nav-link {
     color: black;
     font-weight: 600;
-    height: 3.125rem;
+    height: 3.5rem;
     padding-top: 1.125rem;
     padding-bottom: 1.188rem;
-    font-size: .75rem;
+    font-size: 1rem;
     padding-left: 2.5rem;
 }
 
@@ -129,6 +129,19 @@ input[type="submit"]:hover {
 }
 .flex-admin {
     display: flex;
+}
+
+.collapse-btn {
+    border: none;
+    padding: 0;
+    font-size: 1rem;
+    padding-left: 2.5rem;
+    background-color: transparent;
+    height: 3.5rem;
+}
+
+.sidebars i {
+    margin-right: .5rem;
 }
 
 /* Admin Dashboard */
@@ -168,4 +181,22 @@ input[type="submit"]:hover {
 
 .dashboard-table-container {
     margin-left: 2.928vw;
+}
+
+/* AdminProject */
+
+.project-container {
+    width: 72.182vw;
+    height: 31.332vw;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    margin-left: 2.928vw;
+    position: relative;
+    margin-top: 5.564vw;
+}
+
+.add-proj {
+    position: absolute;
+    z-index: 10;
+    bottom: 4vw;
+    right: 4vw;
 }

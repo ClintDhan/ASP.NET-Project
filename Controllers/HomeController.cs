@@ -26,6 +26,10 @@ public class HomeController : Controller
     {
         return View("~/Views/Home/Admin/AdminDashboard.cshtml");
     }
+     public IActionResult AdminProject()
+    {
+        return View("~/Views/Home/Admin/AdminProject.cshtml");
+    }
 
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
