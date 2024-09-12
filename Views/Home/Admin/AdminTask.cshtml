@@ -6,9 +6,11 @@
     Admin Task
 }
 <div class="header-color"></div>
-<div class="btn-right"><button type="button" class="btn btn-primary add-proj" data-bs-toggle="modal" data-bs-target="#exampleModal">
- <i class="bi bi-plus-circle-fill"></i>Add Task
-</button></div>
+<div class="btn-right">
+  <button type="button" class="btn btn-primary add-proj" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">
+    <i class="bi bi-plus-circle-fill"></i>Add Project
+  </button>
+</div>
 <div class="project-container">
   <div class="scroll-container">
 <table id="example1" class="table table-striped" style="width:100%">
@@ -48,6 +50,67 @@
         </tbody>
         
     </table>
+  </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg custom-modal-size">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="flx-row">
+          <div class="">
+            <label for="">Project Name:</label><br>
+            <input type="text">
+          </div>
+          <div class="" style="margin-left: 1rem;">
+            <label for="">Project Name:</label><br>
+            <input type="text">
+          </div>
+        </div>
+
+        <div class="flx-row">
+          <div class="">
+            <label for="">Start Date:</label><br>
+            <input type="date">
+          </div>
+          <div class="" style="margin-left: 1rem;">
+            <label for="">Due Date:</label><br>
+            <input type="date">
+          </div>
+        </div>
+
+        <div class="flx-row">
+          <div>
+            <label for="">Members:</label> <br>
+            <select name="cars" id="cars" multiple>
+              <option value="volvo">Clint</option>
+              <option value="saab">Mekko</option>
+              <option value="opel">Jonathan</option>
+              <option value="audi">MeowMeow</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flx-row">
+          <div>
+            <label for="exampleFormControlTextarea1">Description:</label><br>
+            <textarea class="form-control text-area-desc" id="exampleFormControlTextarea1" rows="3"></textarea>
+          </div>
+        </div>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
   </div>
 </div>
 

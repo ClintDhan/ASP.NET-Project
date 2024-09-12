@@ -206,8 +206,9 @@ input[type="submit"]:hover {
     z-index: 10;
     background-color: #A0D15B;
     border: none;
-    width: 10rem;
-    height: 3rem;
+    width: 8rem;
+    margin-bottom: 2vh;
+    height: 2.5rem;
     margin-left: auto;
 }
 .add-proj i {
@@ -220,8 +221,39 @@ input[type="submit"]:hover {
     overflow-x: hidden;
 }
 
+.flx-row {
+    display: flex;
+}
+.custom-modal-size {
+    max-width: 55vw;
+  }
+.modal-content input,select {
+    width: 25vw;
+}
+
+.text-area-desc {
+    width: 51.5vw;
+}
+
+.modal-content input,select,.text-area-desc {
+    margin-top: 1rem;
+    margin-bottom: .5rem;
+}
+
+.flx-row label {
+    font-weight: 500;
+    border-left: 2px solid #D2DF46;
+}
+
 
 .active>.page-link, .page-link.active {
     border-color: #A0D15B !important;
     background-color: #A0D15B;
+}
+
+
+
+/* AdminUser */
+.users-container {
+    margin-top: 10.3vh;
 }
