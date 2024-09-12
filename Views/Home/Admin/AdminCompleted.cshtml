@@ -1,18 +1,12 @@
 @{
-  Layout = "~/Views/Shared/AdminLayout.cshtml";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
 }
 
 @section Title {
-Admin Projects
+Admin Completed Projects
 }
 
 <div class="header-color"></div>
-<!-- Button trigger modal -->
-<div class="btn-right">
-  <button type="button" class="btn btn-primary add-proj" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">
-    <i class="bi bi-plus-circle-fill"></i>Add Project
-  </button>
-</div>
 
 <!-- Modal -->
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
@@ -78,7 +72,7 @@ Admin Projects
 
 
 <div class="project-container">
-  <div class="scroll-container">
+  <div class="scroll-container users-container">
     <table id="example" class="table table-striped" style="width:100%">
       <thead>
         <tr>
@@ -96,7 +90,7 @@ Admin Projects
           <td>System Architect</td>
           <td>2011-04-25</td>
           <td>2011-04-25</td>
-          <td>On-going</td>
+          <td>Completed</td>
           <td>
             <div class="btn-group">
               <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
@@ -105,8 +99,6 @@ Admin Projects
               </button>
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="#">View</a></li>
-                <li><a class="dropdown-item" href="#">Edit</a></li>
-                <li><a class="dropdown-item" href="#">Delete</a></li>
               </ul>
             </div>
           </td>
@@ -117,7 +109,7 @@ Admin Projects
           <td>Accountant</td>
           <td>2011-04-25</td>
           <td>2011-07-25</td>
-          <td>On-going</td>
+          <td>Completed</td>
           <td><div class="btn-group">
               <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
                 aria-expanded="false">
@@ -125,8 +117,6 @@ Admin Projects
               </button>
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="#">View</a></li>
-                <li><a class="dropdown-item" href="#">Edit</a></li>
-                <li><a class="dropdown-item" href="#">Delete</a></li>
               </ul>
             </div>
           </td></td>
@@ -136,7 +126,7 @@ Admin Projects
           <td>Junior Technical Author</td>
           <td>2011-04-25</td>
           <td>2011-07-25</td>
-          <td>On-going</td>
+          <td>Completed</td>
           <td><div class="btn-group">
               <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
                 aria-expanded="false">
@@ -144,8 +134,6 @@ Admin Projects
               </button>
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="#">View</a></li>
-                <li><a class="dropdown-item" href="#">Edit</a></li>
-                <li><a class="dropdown-item" href="#">Delete</a></li>
               </ul>
             </div>
           </td></td>

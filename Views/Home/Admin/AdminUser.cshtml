@@ -2,52 +2,85 @@
     Layout = "~/Views/Shared/AdminLayout.cshtml";
 }
 
-@section Title{
-    Admin User
+@section Title {
+Admin User
 }
 
 <div class="header-color"></div>
 <div class="project-container users-container">
-  <div class="scroll-container">
-    <table id="example" class="table table-striped" style="width:100%">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th style="width: 5vw;">Name</th>
-          <th>Role</th>
-          <th>Date Created</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="text-align: center;">1</td>
-          <td>Jomekko Aguirre</td>
-          <td>Admin</td>
-          <td>9/12/2004</td>
-          <td>wd</td>
-        </tr>
-        <tr>
-          <td style="text-align: center;">2</td>
-          <td>Clint Rono</td>
-          <td>Admin</td>
-          <td>9/12/2004</td>
-          <td>wd</td>
-        </tr>
-        <tr>
-          <td style="text-align: center;">3</td>
-          <td>Meow Meow</td>
-          <td>Project Manager</td>
-          <td>9/12/2004</td>
-          <td>wd</td>
-        </tr>
+    <div class="scroll-container">
+        <table id="example" class="table table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th style="width: 5vw;">Name</th>
+                    <th>Role</th>
+                    <th>Date Created</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: center;">1</td>
+                    <td>Jomekko Aguirre</td>
+                    <td>Admin</td>
+                    <td>9/12/2004</td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Action
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Edit</a></li>
+                                <li><a class="dropdown-item" href="#">Delete</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">2</td>
+                    <td>Clint Rono</td>
+                    <td>Admin</td>
+                    <td>9/12/2004</td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Action
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Edit</a></li>
+                                <li><a class="dropdown-item" href="#">Delete</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">3</td>
+                    <td>Meow Meow</td>
+                    <td>Project Manager</td>
+                    <td>9/12/2004</td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Action
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Edit</a></li>
+                                <li><a class="dropdown-item" href="#">Delete</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
 
-      </tbody>
+            </tbody>
 
-    </table>
-  </div>
+        </table>
+    </div>
 </div>
 
 <script>
     document.getElementById("adminUser").classList.add("active");
-  </script>
+</script>

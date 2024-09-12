@@ -1,4 +1,4 @@
-*{
+* {
     padding: 0;
     margin: 0;
     font-family: Inter;
@@ -20,7 +20,8 @@
     align-items: center;
 }
 
-.form-login, .form-sigin {
+.form-login,
+.form-sigin {
     border-radius: 20px;
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     text-align: center;
@@ -28,7 +29,9 @@
     transform: translateY(-120%);
     animation: formAnimate 1s ease-in-out forwards;
 }
-.form-login, .form-sigin {
+
+.form-login,
+.form-sigin {
     position: relative;
 }
 
@@ -38,7 +41,9 @@ h2 {
     font-size: 24px;
     font-weight: 600;
 }
-input, select {
+
+input,
+select {
     width: 18.75rem;
     height: 2.5rem;
     border: 1px solid #CEC5C5;
@@ -69,30 +74,36 @@ input:checked {
     font-size: 12px;
     margin-top: 1.25rem;
 }
+
 .input-pass-signin {
     margin-bottom: 1.125rem;
 }
+
 select {
     margin-bottom: 1.125rem;
 }
+
 input[type="text"]:focus,
 input[type="password"]:focus {
-    border-color: #D2DF46; /* Optional: Change the border color as well */
+    border-color: #D2DF46;
+    /* Optional: Change the border color as well */
 }
+
 input[type="submit"]:hover {
-    background-color:#D2DF46 ;
+    background-color: #D2DF46;
 }
 
 @keyframes formAnimate {
-    from{
+    from {
         transform: translateY(-120%);
     }
+
     to {
         transform: translateY(0%);
     }
 }
 
-.sidebars{
+.sidebars {
     height: 100vh;
     width: 21.962vw;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
@@ -110,7 +121,7 @@ input[type="submit"]:hover {
     padding-left: 2.5rem;
 }
 
-.title{
+.title {
     color: black;
     font-weight: 900;
 }
@@ -128,8 +139,37 @@ input[type="submit"]:hover {
     background-color: #A0D15B !important;
     color: white;
 }
+
 .flex-admin {
     display: flex;
+}
+
+.dashboard-portion-flex {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 2vw;
+    transition: all .1s ease-in-out;
+}
+.dashboard-portion-flex i {
+    font-size: 2rem;
+    color: white;
+}
+
+.portion-title {
+    text-align: right;
+    font-size: 15px;
+    opacity: .6;
+}
+
+.portion-count {
+    margin-bottom: 0;
+    margin-left: 9vw;
+    font-size: 24px;
+    width: 50px;
+    text-align: right;
+    white-space: nowrap;
+    font-weight: 600;
+
 }
 
 .collapse-btn {
@@ -159,26 +199,62 @@ input[type="submit"]:hover {
     width: 72.328vw;
 }
 
-.dashboard-table th, .dashboard-table td {
-    border: 1px solid #ddd; 
-    padding: 8px; 
+.dashboard-table th,
+.dashboard-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
 }
 
 .dashboard-portion {
     display: grid;
     grid-template-columns: 22.329vw 21.962vw 22.329vw;
-    grid-template-rows: 5rem;
+    grid-template-rows: 7rem;
     margin-top: 4.375rem;
     margin-left: 2.928vw;
     gap: 2.782vw;
 }
 
-.dashboard-portion > * {
+.dashboard-portion>* {
+    background-color: rgb(245, 245, 245);
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: lightgray;
-    border-radius: 8px;
+    border: 1px solid lightgray;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    
+}
+
+.dashboard-portion-flex:hover {
+    margin-bottom: .5rem;
+}
+.red {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background-color: red;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.blue {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background-color: lightseagreen;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.green {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background-color: green;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .dashboard-table-container {
@@ -201,6 +277,7 @@ input[type="submit"]:hover {
     margin-right: 3vw;
     margin-top: 2vh;
 }
+
 .add-proj {
     position: relative;
     z-index: 10;
@@ -211,6 +288,7 @@ input[type="submit"]:hover {
     height: 2.5rem;
     margin-left: auto;
 }
+
 .add-proj i {
     font-size: 1rem;
 }
@@ -221,13 +299,23 @@ input[type="submit"]:hover {
     overflow-x: hidden;
 }
 
+table.dataTable th.dt-type-numeric,
+table.dataTable th.dt-type-date,
+table.dataTable td.dt-type-numeric,
+table.dataTable td.dt-type-date {
+    text-align: center;
+}
+
 .flx-row {
     display: flex;
 }
+
 .custom-modal-size {
     max-width: 55vw;
-  }
-.modal-content input,select {
+}
+
+.modal-content input,
+select {
     width: 25vw;
 }
 
@@ -235,7 +323,9 @@ input[type="submit"]:hover {
     width: 51.5vw;
 }
 
-.modal-content input,select,.text-area-desc {
+.modal-content input,
+select,
+.text-area-desc {
     margin-top: 1rem;
     margin-bottom: .5rem;
 }
@@ -246,7 +336,8 @@ input[type="submit"]:hover {
 }
 
 
-.active>.page-link, .page-link.active {
+.active>.page-link,
+.page-link.active {
     border-color: #A0D15B !important;
     background-color: #A0D15B;
 }

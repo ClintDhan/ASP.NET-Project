@@ -22,11 +22,11 @@ public class HomeController : Controller
     {
         return View();
     }
-     public IActionResult AdminDashboard()
+    public IActionResult AdminDashboard()
     {
         return View("~/Views/Home/Admin/AdminDashboard.cshtml");
     }
-     public IActionResult AdminProject()
+    public IActionResult AdminProject()
     {
         return View("~/Views/Home/Admin/AdminProject.cshtml");
     }
@@ -39,6 +39,11 @@ public class HomeController : Controller
     public IActionResult AdminUser()
     {
         return View("~/Views/Home/Admin/AdminUser.cshtml");
+    }
+
+    public IActionResult AdminCompleted()
+    {
+        return View("~/Views/Home/Admin/AdminCompleted.cshtml");
     }
 
 
