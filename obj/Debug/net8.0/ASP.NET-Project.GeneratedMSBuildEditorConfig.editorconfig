@@ -26,6 +26,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBZG1pblxBZG1pblByb2plY3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/xampp4/htdocs/ASP.NET-Project/Views/Home/Admin/AdminTask.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBZG1pblxBZG1pblRhc2suY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/xampp4/htdocs/ASP.NET-Project/Views/Home/Admin/AdminUser.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBZG1pblxBZG1pblVzZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/xampp4/htdocs/ASP.NET-Project/Views/Home/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

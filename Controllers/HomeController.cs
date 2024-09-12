@@ -31,6 +31,16 @@ public class HomeController : Controller
         return View("~/Views/Home/Admin/AdminProject.cshtml");
     }
 
+    public IActionResult AdminTask()
+    {
+        return View("~/Views/Home/Admin/AdminTask.cshtml");
+    }
+
+    public IActionResult AdminUser()
+    {
+        return View("~/Views/Home/Admin/AdminUser.cshtml");
+    }
+
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

@@ -7,3 +7,5 @@ let adminDashboard = document.getElementById('adminDashboard');
 adminDashboard.addEventListener("click", function(){
     adminDashboard.classList.add("active");
 })
+
+new DataTable('#example');

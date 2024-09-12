@@ -126,6 +126,7 @@ input[type="submit"]:hover {
 
 .active {
     background-color: #A0D15B !important;
+    color: white;
 }
 .flex-admin {
     display: flex;
@@ -135,9 +136,10 @@ input[type="submit"]:hover {
     border: none;
     padding: 0;
     font-size: 1rem;
-    padding-left: 2.5rem;
+    padding-right: 8vw;
     background-color: transparent;
     height: 3.5rem;
+    width: 100%;
 }
 
 .sidebars i {
@@ -191,12 +193,35 @@ input[type="submit"]:hover {
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     margin-left: 2.928vw;
     position: relative;
-    margin-top: 5.564vw;
 }
 
+.btn-right {
+    display: flex;
+    justify-content: end;
+    margin-right: 3vw;
+    margin-top: 2vh;
+}
 .add-proj {
-    position: absolute;
+    position: relative;
     z-index: 10;
-    bottom: 4vw;
-    right: 4vw;
+    background-color: #A0D15B;
+    border: none;
+    width: 10rem;
+    height: 3rem;
+    margin-left: auto;
+}
+.add-proj i {
+    font-size: 1rem;
+}
+
+.scroll-container {
+    max-height: 29vw;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+
+.active>.page-link, .page-link.active {
+    border-color: #A0D15B !important;
+    background-color: #A0D15B;
 }

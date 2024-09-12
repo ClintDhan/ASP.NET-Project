@@ -1,0 +1,57 @@
+@{
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+@section Title{
+    Admin Task
+}
+<div class="header-color"></div>
+<div class="btn-right"><button type="button" class="btn btn-primary add-proj" data-bs-toggle="modal" data-bs-target="#exampleModal">
+ <i class="bi bi-plus-circle-fill"></i>Add Task
+</button></div>
+<div class="project-container">
+  <div class="scroll-container">
+<table id="example1" class="table table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th style="width: 10vw;">Project Name</th>
+                <th>Task Name</th>
+                <th>Assigned To</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>System Architect</td>
+                <td>Create a UI</td>
+                <td>On-going</td>
+                <td>On-going</td>
+                <td>On-going</td>
+            </tr>
+            <tr>
+                <td>Accountant</td>
+                <td>2011-04-25</td>
+                <td>2011-07-25</td>
+                <td>On-going</td>
+                <td>$170,750</td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">3</td>
+                <td>Junior Technical Author</td>
+                <td>2011-04-25</td>
+                <td>2011-07-25</td>
+                <td>On-going</td>
+                <td>$86,000</td>
+            </tr>
+            
+        </tbody>
+        
+    </table>
+  </div>
+</div>
+
+<script>
+
+    document.getElementById("adminTask").classList.add("active");
+  </script>
