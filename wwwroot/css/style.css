@@ -4,6 +4,12 @@
     font-family: Inter;
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 
 .form-main {
     display: grid;
@@ -13,7 +19,7 @@
     margin-top: 3rem;
 }
 
-
+f
 .img-gif {
     display: flex;
     justify-content: center;
@@ -215,7 +221,7 @@ input[type="submit"]:hover {
 }
 
 .dashboard-portion>* {
-    background-color: rgb(245, 245, 245);
+    background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;

@@ -46,6 +46,10 @@ public class HomeController : Controller
         return View("~/Views/Home/Admin/AdminCompleted.cshtml");
     }
 
+    public IActionResult ProjectView(){
+        return View("~/Views/Home/ProjectView.cshtml");
+    }
+
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

@@ -1,0 +1,23 @@
+@{
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+@section Title {
+View Project
+}
+
+<div class="header-color"></div>
+<div class="project-container users-container" style="height: 75vh;">
+    <div class="project-grid">
+
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        document.querySelector('.collapse-btn').classList.add("active");
+        document.querySelector('.bi-send-fill').style.color = "white";
+        document.querySelector('.collapse-btn').style.color = "white";
+    </script>
+}
