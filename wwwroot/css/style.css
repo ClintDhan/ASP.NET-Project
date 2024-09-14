@@ -354,3 +354,21 @@ select,
 .users-container {
     margin-top: 10.3vh;
 }
+
+/* Project View */
+
+.project-grid {
+    display: grid;
+    grid-template-columns: 20% 20% 20%;
+    grid-template-rows: 20vh 20vh;
+    gap: 20px;
+}
+
+.project-grid > * {
+    border: 1px solid red;
+}
+
+.to-expand {
+    grid-column: 3;
+    grid-row: 1 / 3;
+}
