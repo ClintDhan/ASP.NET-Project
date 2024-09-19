@@ -2,9 +2,14 @@ namespace ASP.NET_Project.Models
 {
     public class Notification
     {
-        public int notification_id {get; set;}
-        public int user_id {get; set;}
-        public string message {get; set;}
+        public int Id {get; set;}
+        public string Message {get; set;}
+        public bool isRead  {get; set;}
+        public DateTime CreatedAt {get; set;}
+
+        public int UserId {get; set;}
+
+        public virtual User User{get; set;}
     }
 }
 
