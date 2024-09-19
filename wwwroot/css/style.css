@@ -4,20 +4,14 @@
     font-family: Inter;
 }
 
-html, body {
-    height: 100%;
-}
-
 
 .form-main {
     display: grid;
     grid-template-columns: 37.5rem 33.125rem;
     grid-template-rows: 32.5rem;
     gap: 1.5rem;
-    margin-top: 3rem;
+    margin-top: 2rem;
 }
-
-f
 .img-gif {
     display: flex;
     justify-content: center;
@@ -377,4 +371,26 @@ select,
 .scroll-content {
     max-height:31.332vw ;
     overflow-y: scroll;
+}
+
+.table-container {
+    margin-top: 20px;
+    width: 100%;
+    height: 45vh;
+    border: 1px solid red;
+}
+
+.table-header {
+    display: flex;
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+
+}
+
+.table-header p {
+    width: 80%;
+}
+
+.table-header button {
+    margin: 0 auto;
 }
