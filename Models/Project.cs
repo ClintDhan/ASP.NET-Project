@@ -7,6 +7,8 @@ public class Project
     public DateTime StartDate   { get; set; }
     public DateTime EndDate { get; set; }
     public string Status { get; set; }
+    public bool IsActive { get; set; } = true; //  set inactive instead nga e delete
+
     public int CreatedById { get; set; }
 
     public virtual User CreatedBy { get; set; }
