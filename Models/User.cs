@@ -1,4 +1,6 @@
+
 namespace ASP.NET_Project.Models;
+
 
 public class User{
     public int Id  { get; set; }

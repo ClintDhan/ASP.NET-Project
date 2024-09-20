@@ -5,7 +5,7 @@
 namespace ASP.NET_Project.Migrations
 {
     /// <inheritdoc />
-    public partial class ProgressEntity : Migration
+    public partial class InitialMigrateUpdate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
