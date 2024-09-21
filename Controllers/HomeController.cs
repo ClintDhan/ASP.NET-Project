@@ -2,58 +2,93 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ASP.NET_Project.Models;
 
-namespace ASP.NET_Project.Controllers;
-
-public class HomeController : Controller
+namespace ASP.NET_Project.Controllers
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
+    public class HomeController : Controller
     {
-        _logger = logger;
-    }
+        private readonly ApplicationDbContext _context; // Use your actual context class
+        private readonly ILogger<HomeController> _logger;
 
-    public IActionResult Login()
-    {
-        return View();
-    }
+        public HomeController(ApplicationDbContext context, ILogger<HomeController> logger)
+        {
+            _context = context;
+            _logger = logger;
+        }
 
-    public IActionResult Signup()
-    {
-        return View();
-    }
-    public IActionResult AdminDashboard()
-    {
-        return View("~/Views/Home/Admin/AdminDashboard.cshtml");
-    }
-    public IActionResult AdminProject()
-    {
-        return View("~/Views/Home/Admin/AdminProject.cshtml");
-    }
+        public IActionResult Login()
+        {
+            return View();
+        }
 
-    public IActionResult AdminTask()
-    {
-        return View("~/Views/Home/Admin/AdminTask.cshtml");
-    }
+        public IActionResult Signup()
+        {
+            return View();
+        }
 
-    public IActionResult AdminUser()
-    {
-        return View("~/Views/Home/Admin/AdminUser.cshtml");
-    }
+        [HttpPost]
+        public IActionResult Register(string UserName, string Email, string Password, string ConfirmPassword, int RoleId)
+        {
+            if (Password != ConfirmPassword)
+            {
+                ModelState.AddModelError("", "Passwords do not match.");
+                return View("Signup"); // Return to the signup view
+            }
 
-    public IActionResult AdminCompleted()
-    {
-        return View("~/Views/Home/Admin/AdminCompleted.cshtml");
-    }
+            if (_context.Users.Any(u => u.UserName == UserName || u.Email == Email))
+            {
+                ModelState.AddModelError("", "Username or email already exists.");
+                return View("Signup"); // Return to the signup view
+            }
 
-    public IActionResult ProjectView(){
-        return View("~/Views/Home/ProjectView.cshtml");
-    }
+            var user = new User
+            {
+                UserName = UserName,
+                Email = Email,
+                Password = Password, // Store plain text as per your preference
+                RoleId = RoleId,
+                IsActive = true
+            };
 
+            _context.Users.Add(user);
+            _context.SaveChanges();
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return RedirectToAction("Login"); // Redirect to login after successful registration
+        }
+
+        public IActionResult AdminDashboard()
+        {
+            return View("~/Views/Home/Admin/AdminDashboard.cshtml");
+        }
+
+        public IActionResult AdminProject()
+        {
+            return View("~/Views/Home/Admin/AdminProject.cshtml");
+        }
+
+        public IActionResult AdminTask()
+        {
+            return View("~/Views/Home/Admin/AdminTask.cshtml");
+        }
+
+        public IActionResult AdminUser()
+        {
+            return View("~/Views/Home/Admin/AdminUser.cshtml");
+        }
+
+        public IActionResult AdminCompleted()
+        {
+            return View("~/Views/Home/Admin/AdminCompleted.cshtml");
+        }
+
+        public IActionResult ProjectView()
+        {
+            return View("~/Views/Home/ProjectView.cshtml");
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
     }
 }
