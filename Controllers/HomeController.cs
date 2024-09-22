@@ -21,28 +21,28 @@ namespace ASP.NET_Project.Controllers
         }
 
         [HttpPost]
-public IActionResult Login(string email, string password)
-{
-    // Fetch the user from the database based on the email and password
-    var user = _context.Users.SingleOrDefault(u => u.Email == email && u.Password == password);
-
-    if (user != null)
-    {
-        // Check RoleId and redirect accordingly
-        if (user.RoleId == 1 || user.RoleId == 3)
+        public IActionResult Login(string email, string password)
         {
-            return RedirectToAction("AdminDashboard");
-        }
-        else if (user.RoleId == 2)
-        {
-            return RedirectToAction("UserDashboard");
-        }
-    }
+            // Fetch the user from the database based on the email and password
+            var user = _context.Users.SingleOrDefault(u => u.Email == email && u.Password == password);
 
-    // If login failed (user is null), return to Login view with an error message
-    ViewBag.ErrorMessage = "Invalid email or password.";
-    return View();
-}
+            if (user != null)
+            {
+                // Check RoleId and redirect accordingly
+                if (user.RoleId == 1 || user.RoleId == 3)
+                {
+                    return RedirectToAction("AdminDashboard");
+                }
+                else if (user.RoleId == 2)
+                {
+                    return RedirectToAction("UserDashboard");
+                }
+            }
+
+            // If login failed (user is null), return to Login view with an error message
+            ViewBag.ErrorMessage = "Invalid email or password.";
+            return View();
+        }
 
 
         public IActionResult Signup()
@@ -95,14 +95,35 @@ public IActionResult Login(string email, string password)
             return View("~/Views/Home/Admin/AdminTask.cshtml");
         }
 
-      public IActionResult AdminUser()
-{
-    // Fetch all users from the database
-    var users = _context.Users.Include(u => u.Role).ToList();  // Assuming Role is a navigation property
+        public IActionResult AdminUser()
+        {
+            // Fetch all users from the database
+            var users = _context.Users.Include(u => u.Role).ToList();  // Assuming Role is a navigation property
 
-    // Pass the list of users to the view
-    return View("~/Views/Home/Admin/AdminUser.cshtml", users);
-}
+            // Pass the list of users to the view
+            return View("~/Views/Home/Admin/AdminUser.cshtml", users);
+        }
+        [HttpPost]
+        public IActionResult UpdateUser(User user)
+        {
+            // Fetch the user from the database based on the ID
+            var existingUser = _context.Users.Find(user.Id);
+
+            if (existingUser != null)
+            {
+                // Update the fields
+                existingUser.UserName = user.UserName;
+                existingUser.RoleId = user.RoleId;
+                existingUser.IsActive = user.IsActive;
+
+                // Save changes to the database
+                _context.SaveChanges();
+            }
+
+            // Redirect to the user management page
+            return RedirectToAction("AdminUser");
+        }
+
 
 
 

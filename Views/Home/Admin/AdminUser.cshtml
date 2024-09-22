@@ -5,7 +5,7 @@
 }
 
 @section Title {
-    Admin User
+Admin User
 }
 
 <div class="header-color"></div>
@@ -17,7 +17,7 @@
                     <th>#</th>
                     <th style="width: 5vw;">Name</th>
                     <th>Email</th>
-                    <th>Password</th> <!-- For security, consider hashing or encrypting passwords -->
+                    <th>Password</th>
                     <th>Role</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -30,10 +30,10 @@
                     <tr>
                         <td style="text-align: center;">@(i + 1)</td>
                         <td>@user.UserName</td>
-                        <td>@user.Email</td> <!-- Display Email -->
-                        <td>@user.Password</td> <!-- Display Password -->
-                        <td>@user.Role.RoleName</td> <!-- Assuming you have RoleName property in Role model -->
-                        <td>@(user.IsActive ? "Active" : "Inactive")</td> <!-- Display Active/Inactive status -->
+                        <td>@user.Email</td>
+                        <td>@user.Password</td>
+                        <td>@user.Role.RoleName</td>
+                        <td>@(user.IsActive ? "Active" : "Inactive")</td>
                         <td>
                             <div class="btn-group">
                                 <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
@@ -41,7 +41,10 @@
                                     Action
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Edit</a></li>
+                                    <li><a class="dropdown-item edit-user-btn" href="#" data-bs-toggle="modal"
+                                            data-bs-target=".bd-example-modal-lg" data-id="@user.Id"
+                                            data-name="@user.UserName" data-role-id="@user.RoleId"
+                                            data-status="@user.IsActive">Edit</a></li>
                                     <li><a class="dropdown-item" href="#">Delete</a></li>
                                 </ul>
                             </div>
@@ -53,6 +56,87 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg custom-modal-size">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm" method="post" action="/Home/UpdateUser">
+                    <!-- Ensure the action points to your UpdateUser method -->
+                    <input type="hidden" id="editUserId" name="Id" value="">
+
+                    <div class="flx-row">
+                        <div class="">
+                            <label for="editUserName">Name:</label><br>
+                            <input type="text" id="editUserName" name="UserName">
+                        </div>
+                        <div class="" style="margin-left: 1rem;">
+                            <label for="editUserRole">Role:</label><br>
+                            <select name="RoleId" id="editUserRole">
+                                <option value="1">Admin</option>
+                                <option value="2">User</option>
+                                <option value="3">Project Manager</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flx-row">
+                        <div class="">
+                            <label for="editUserStatus">Status</label> <br>
+                            <select name="IsActive" id="editUserStatus">
+                                <option value="false">Inactive</option>
+                                <option value="true">Active</option>
+                            </select>
+
+
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="editUserForm" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+    // Handle edit button click
+    // Handle edit button click
+    document.querySelectorAll('.edit-user-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            // Fetch user data from data attributes
+            var userId = this.getAttribute('data-id');
+            var userName = this.getAttribute('data-name');
+            var roleId = this.getAttribute('data-role-id');
+            var isActive = this.getAttribute('data-status') === "true"; // Convert to boolean
+
+            // Set modal input values with fetched data
+            document.getElementById('editUserId').value = userId;
+            document.getElementById('editUserName').value = userName;
+
+            // Set Role dropdown to the correct roleId
+            var roleDropdown = document.getElementById('editUserRole');
+            for (var i = 0; i < roleDropdown.options.length; i++) {
+                if (roleDropdown.options[i].value == roleId) {
+                    roleDropdown.options[i].selected = true;
+                    break;
+                }
+            }
+
+            // Set Status dropdown to the correct status (true for Active, false for Inactive)
+            var statusDropdown = document.getElementById('editUserStatus');
+            statusDropdown.value = isActive.toString(); // Convert boolean to string for dropdown value
+        });
+    });
+
+
     document.getElementById("adminUser").classList.add("active");
 </script>
