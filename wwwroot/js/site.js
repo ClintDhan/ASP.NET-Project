@@ -8,4 +8,4 @@ adminDashboard.addEventListener("click", function(){
     adminDashboard.classList.add("active");
 })
 
-new DataTable('#example');
+

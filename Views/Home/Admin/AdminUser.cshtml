@@ -1,9 +1,11 @@
+@model List<ASP.NET_Project.Models.User>
+
 @{
     Layout = "~/Views/Shared/AdminLayout.cshtml";
 }
 
 @section Title {
-Admin User
+    Admin User
 }
 
 <div class="header-color"></div>
@@ -14,69 +16,39 @@ Admin User
                 <tr>
                     <th>#</th>
                     <th style="width: 5vw;">Name</th>
+                    <th>Email</th>
+                    <th>Password</th> <!-- For security, consider hashing or encrypting passwords -->
                     <th>Role</th>
-                    <th>Date Created</th>
+                    <th>Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td style="text-align: center;">1</td>
-                    <td>Jomekko Aguirre</td>
-                    <td>Admin</td>
-                    <td>9/12/2004</td>
-                    <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                Action
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Edit</a></li>
-                                <li><a class="dropdown-item" href="#">Delete</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="text-align: center;">2</td>
-                    <td>Clint Rono</td>
-                    <td>Admin</td>
-                    <td>9/12/2004</td>
-                    <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                Action
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Edit</a></li>
-                                <li><a class="dropdown-item" href="#">Delete</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="text-align: center;">3</td>
-                    <td>Meow Meow</td>
-                    <td>Project Manager</td>
-                    <td>9/12/2004</td>
-                    <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                Action
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Edit</a></li>
-                                <li><a class="dropdown-item" href="#">Delete</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    var user = Model[i];
+                    <tr>
+                        <td style="text-align: center;">@(i + 1)</td>
+                        <td>@user.UserName</td>
+                        <td>@user.Email</td> <!-- Display Email -->
+                        <td>@user.Password</td> <!-- Display Password -->
+                        <td>@user.Role.RoleName</td> <!-- Assuming you have RoleName property in Role model -->
+                        <td>@(user.IsActive ? "Active" : "Inactive")</td> <!-- Display Active/Inactive status -->
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    Action
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Edit</a></li>
+                                    <li><a class="dropdown-item" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                }
             </tbody>
-
         </table>
     </div>
 </div>

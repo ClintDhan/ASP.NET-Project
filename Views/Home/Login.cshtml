@@ -25,10 +25,13 @@
 
         <div class="form-login">
             <h2>Welcome Back!</h2>
-            <input type="text" class="input-text" placeholder="Enter username" required> <br>
-            <input type="password" class="input-pass" placeholder="Enter password" required> <br>
-            <a href="/Home/AdminDashboard"><input type="submit" class="input-submit" value="LOGIN"></a> <br>
-            <a href="/Home/Signup" class="form-link">Create Account</a>
+            <form asp-action="Login" method="post">
+                <input type="email" name="Email" class="input-text" placeholder="Enter email" required> <br>
+                <input type="password" name="Password" class="input-pass" placeholder="Enter password" required> <br>
+                <input type="submit" class="input-submit" value="LOGIN"> <br>
+                <a href="/Home/Signup" class="form-link">Create Account</a>
+            </form>
+
         </div>
     </main>
 

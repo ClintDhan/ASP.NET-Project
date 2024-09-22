@@ -4,9 +4,7 @@ namespace ASP.NET_Project.Models
     {
         Pending,
         InProgress,
-        Completed,
-        OnHold,
-        Canceled
+        Completed
     }
 
     public class Project
