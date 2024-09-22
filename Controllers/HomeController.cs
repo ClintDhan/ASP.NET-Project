@@ -28,6 +28,13 @@ namespace ASP.NET_Project.Controllers
 
             if (user != null)
             {
+                // Check if the user is active
+                if (!user.IsActive)
+                {
+                    ViewBag.ErrorMessage = "Your account is inactive. Please contact support.";
+                    return View();
+                }
+
                 // Check RoleId and redirect accordingly
                 if (user.RoleId == 1 || user.RoleId == 3)
                 {
@@ -39,10 +46,11 @@ namespace ASP.NET_Project.Controllers
                 }
             }
 
-            // If login failed (user is null), return to Login view with an error message
+            // If login failed (user is null or inactive), return to Login view with an error message
             ViewBag.ErrorMessage = "Invalid email or password.";
             return View();
         }
+
 
 
         public IActionResult Signup()
@@ -87,8 +95,67 @@ namespace ASP.NET_Project.Controllers
 
         public IActionResult AdminProject()
         {
-            return View("~/Views/Home/Admin/AdminProject.cshtml");
+            var model = new AdminProjectsViewModel
+            {
+                Projects = _context.Projects.ToList(), // Get all projects from the database
+                ProjectManagers = _context.Users
+                    .Where(u => u.RoleId == 3) // Assuming RoleId 3 is for Project Managers
+                    .ToList(),
+                Users = _context.Users.ToList() // Get all users for the members dropdown
+            };
+
+            var users = _context.Users
+       .Where(u => u.RoleId == 2 && !_context.Tasks.Any(t => t.AssignedToId == u.Id))
+       .ToList();
+
+            ViewBag.Users = users;
+
+            return View("~/Views/Home/Admin/AdminProject.cshtml", model);
         }
+
+
+        [HttpPost]
+        public IActionResult CreateProject(string projectName, int projectManagerId, List<int> userIds, DateTime dueDate, string description)
+        {
+            // Check if the project manager is already assigned to a project
+            var existingProject = _context.Projects.Any(p => p.ProjectManagerId == projectManagerId);
+            if (existingProject)
+            {
+                // Handle error: Project manager is already assigned to another project
+                ModelState.AddModelError("", "Selected project manager is already assigned to another project.");
+                return View(); // Return to the view with an error message
+            }
+
+            var project = new Project
+            {
+                Name = projectName,
+                StartDate = DateTime.Now,
+                EndDate = dueDate,
+                Description = description,
+                Status = ProjectStatus.Pending,
+                ProjectManagerId = projectManagerId // Assign the project manager
+            };
+
+            _context.Projects.Add(project);
+            _context.SaveChanges();
+
+            // Assign users to the project
+            foreach (var userId in userIds)
+            {
+                var user = _context.Users.Find(userId);
+                if (user != null)
+                {
+                    user.ProjectId = project.Id; // Assign the user to the project
+                    _context.Users.Update(user);
+                }
+            }
+
+            _context.SaveChanges();
+
+            return RedirectToAction("AdminProjects");
+        }
+
+
 
         public IActionResult AdminTask()
         {
@@ -148,5 +215,12 @@ namespace ASP.NET_Project.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+    }
+
+    internal class AdminProjectsViewModel
+    {
+        public List<Project> Projects { get; set; }
+        public List<User> ProjectManagers { get; set; }
+        public List<User> Users { get; set; }
     }
 }
