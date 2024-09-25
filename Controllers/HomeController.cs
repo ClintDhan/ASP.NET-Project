@@ -114,46 +114,39 @@ namespace ASP.NET_Project.Controllers
         }
 
 
-        [HttpPost]
-        public IActionResult CreateProject(string projectName, int projectManagerId, List<int> userIds, DateTime dueDate, string description)
-        {
-            // Check if the project manager is already assigned to a project
-            var existingProject = _context.Projects.Any(p => p.ProjectManagerId == projectManagerId);
-            if (existingProject)
-            {
-                // Handle error: Project manager is already assigned to another project
-                ModelState.AddModelError("", "Selected project manager is already assigned to another project.");
-                return View(); // Return to the view with an error message
-            }
+      [HttpPost]
+public IActionResult CreateProject(string projectName, int projectManagerId, List<int> userIds, DateTime dueDate, string description)
+{
+    // Create a new project
+    var project = new Project
+    {
+        Name = projectName,
+        StartDate = DateTime.Now,
+        EndDate = dueDate,
+        Description = description,
+        Status = ProjectStatus.Pending,
+        ProjectManagerId = projectManagerId // Assign the project manager
+    };
 
-            var project = new Project
-            {
-                Name = projectName,
-                StartDate = DateTime.Now,
-                EndDate = dueDate,
-                Description = description,
-                Status = ProjectStatus.Pending,
-                ProjectManagerId = projectManagerId // Assign the project manager
-            };
+    // Add the project to the database
+    _context.Projects.Add(project);
+    _context.SaveChanges(); // Save the project first to generate the project ID
 
-            _context.Projects.Add(project);
-            _context.SaveChanges();
+    // Assign users to the project
+    var usersToAdd = _context.Users.Where(u => userIds.Contains(u.Id)).ToList();
 
-            // Assign users to the project
-            foreach (var userId in userIds)
-            {
-                var user = _context.Users.Find(userId);
-                if (user != null)
-                {
-                    user.ProjectId = project.Id; // Assign the user to the project
-                    _context.Users.Update(user);
-                }
-            }
+    // Add users to the project's Users collection one by one
+    foreach (var user in usersToAdd)
+    {
+        project.Users.Add(user);
+    }
 
-            _context.SaveChanges();
+    // Update the database with the project and its users
+    _context.SaveChanges();
 
-            return RedirectToAction("AdminProjects");
-        }
+    return RedirectToAction("AdminProjects");
+}
+
 
 
 

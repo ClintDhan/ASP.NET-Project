@@ -15,35 +15,36 @@ namespace ASP.NET_Project.Models
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Progress> Progresses { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
+      protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    base.OnModelCreating(modelBuilder);
 
-            // Seed roles
-            modelBuilder.Entity<Role>().HasData(
-                new Role { RoleId = 1, RoleName = "Admin" },
-                new Role { RoleId = 2, RoleName = "User" },
-                new Role { RoleId = 3, RoleName = "ProjectManager" } // Example additional role
-            );
+    // Seed roles
+    modelBuilder.Entity<Role>().HasData(
+        new Role { RoleId = 1, RoleName = "Admin" },
+        new Role { RoleId = 2, RoleName = "User" },
+        new Role { RoleId = 3, RoleName = "ProjectManager" }
+    );
 
-            // Configure relationships
-            modelBuilder.Entity<Project>()
-                .HasOne(p => p.CreatedBy)
-                .WithMany() // A User can create multiple Projects
-                .HasForeignKey(p => p.CreatedById)
-                .OnDelete(DeleteBehavior.Restrict); // Define behavior on delete
+    // Many-to-many relationship between User and Project
+    modelBuilder.Entity<User>()
+        .HasMany(u => u.Projects)
+        .WithMany(p => p.Users)
+        .UsingEntity(j => j.ToTable("UserProjects"));
 
-            modelBuilder.Entity<Project>()
-                .HasOne(p => p.ProjectManager)
-                .WithMany() // A User can manage multiple Projects
-                .HasForeignKey(p => p.ProjectManagerId)
-                .OnDelete(DeleteBehavior.Restrict); // Define behavior on delete
+    // Configure CreatedBy and ProjectManager relationships
+    modelBuilder.Entity<Project>()
+        .HasOne(p => p.CreatedBy)
+        .WithMany()
+        .HasForeignKey(p => p.CreatedById)
+        .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Project)
-                .WithMany(p => p.Users) // A Project can have multiple Users
-                .HasForeignKey(u => u.ProjectId)
-                .OnDelete(DeleteBehavior.Restrict); // Define behavior on delete
-        }
+    modelBuilder.Entity<Project>()
+        .HasOne(p => p.ProjectManager)
+        .WithMany()
+        .HasForeignKey(p => p.ProjectManagerId)
+        .OnDelete(DeleteBehavior.Restrict);
+}
+
     }
 }
