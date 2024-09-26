@@ -21,35 +21,29 @@ namespace ASP.NET_Project.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(string email, string password)
+public IActionResult Login(string email, string password)
+{
+    var user = _context.Users.SingleOrDefault(u => u.Email == email && u.Password == password);
+
+    if (user != null && user.IsActive)
+    {
+        // Store user ID in session
+        HttpContext.Session.SetInt32("UserId", user.Id);
+
+        if (user.RoleId == 1 || user.RoleId == 3)
         {
-            // Fetch the user from the database based on the email and password
-            var user = _context.Users.SingleOrDefault(u => u.Email == email && u.Password == password);
-
-            if (user != null)
-            {
-                // Check if the user is active
-                if (!user.IsActive)
-                {
-                    ViewBag.ErrorMessage = "Your account is inactive. Please contact support.";
-                    return View();
-                }
-
-                // Check RoleId and redirect accordingly
-                if (user.RoleId == 1 || user.RoleId == 3)
-                {
-                    return RedirectToAction("AdminDashboard");
-                }
-                else if (user.RoleId == 2)
-                {
-                    return RedirectToAction("UserDashboard");
-                }
-            }
-
-            // If login failed (user is null or inactive), return to Login view with an error message
-            ViewBag.ErrorMessage = "Invalid email or password.";
-            return View();
+            return RedirectToAction("AdminDashboard");
         }
+        else if (user.RoleId == 2)
+        {
+            return RedirectToAction("UserDashboard");
+        }
+    }
+
+    ViewBag.ErrorMessage = "Invalid email or password.";
+    return View();
+}
+
 
 
 
@@ -117,6 +111,15 @@ namespace ASP.NET_Project.Controllers
       [HttpPost]
 public IActionResult CreateProject(string projectName, int projectManagerId, List<int> userIds, DateTime dueDate, string description)
 {
+    // Retrieve the user ID from session
+    var userId = HttpContext.Session.GetInt32("UserId");
+
+    if (userId == null)
+    {
+        // Handle the case where the user is not logged in or session expired
+        return RedirectToAction("Login");
+    }
+
     // Create a new project
     var project = new Project
     {
@@ -125,28 +128,24 @@ public IActionResult CreateProject(string projectName, int projectManagerId, Lis
         EndDate = dueDate,
         Description = description,
         Status = ProjectStatus.Pending,
-        ProjectManagerId = projectManagerId // Assign the project manager
+        ProjectManagerId = projectManagerId,
+        CreatedById = userId.Value // Assign the current user as the creator
     };
 
-    // Add the project to the database
     _context.Projects.Add(project);
-    _context.SaveChanges(); // Save the project first to generate the project ID
+    _context.SaveChanges();
 
     // Assign users to the project
     var usersToAdd = _context.Users.Where(u => userIds.Contains(u.Id)).ToList();
-
-    // Add users to the project's Users collection one by one
     foreach (var user in usersToAdd)
     {
         project.Users.Add(user);
     }
 
-    // Update the database with the project and its users
     _context.SaveChanges();
 
-    return RedirectToAction("AdminProjects");
+    return RedirectToAction("AdminProject");
 }
-
 
 
 
