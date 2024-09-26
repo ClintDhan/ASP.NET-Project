@@ -65,7 +65,7 @@ Admin Projects
           <div class="flx-row">
             <div>
               <label for="">Members:</label><br>
-              <select class="selectpicker" multiple data-live-search="true" name="members" id="members" style="width: 25vw;">
+              <select class="selectpicker" multiple data-live-search="true" name="members" id="members" style="width: 25vw; !important">
                 @foreach (var user in ViewBag.Users)
                 {
                   <option value="@user.Id">@user.UserName</option>

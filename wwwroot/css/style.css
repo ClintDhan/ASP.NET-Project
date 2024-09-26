@@ -394,3 +394,8 @@ select,
 .table-header button {
     margin: 0 auto;
 }
+
+.bootstrap-select {
+    width: 25vw !important;
+    border-radius: 0px !important;
+}
