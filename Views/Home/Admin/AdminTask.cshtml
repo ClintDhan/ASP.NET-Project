@@ -5,6 +5,7 @@
 @section Title {
 Admin Task
 }
+
 <div class="header-color"></div>
 <div class="btn-right">
     <button type="button" class="btn btn-primary add-proj" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">
@@ -24,122 +25,116 @@ Admin Task
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>System Architect</td>
-                    <td>Create a UI</td>
-                    <td>Euan</td>
-                    <td>On-going</td>
-                    <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                Action
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">View</a></li>
-                                <li><a class="dropdown-item" href="#">Edit</a></li>
-                                <li><a class="dropdown-item" href="#">Delete</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Accountant</td>
-                    <td>Make a Backend</td>
-                    <td>MeowMeow</td>
-                    <td>On-going</td>
-                    <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                Action
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Edit</a></li>
-                                <li><a class="dropdown-item" href="#">Delete</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Making a Donut101</td>
-                    <td>Junior Technical Author</td>
-                    <td>Clint</td>
-                    <td>On-going</td>
-                    <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                Action
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">View</a></li>
-                                <li><a class="dropdown-item" href="#">Edit</a></li>
-                                <li><a class="dropdown-item" href="#">Delete</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
+                @foreach (var task in Model.Tasks)
+                {
+                    <tr>
+                        <td>@task.Project.Name</td>
+                        <td>@task.Name</td>
+                        <td>@task.AssignedTo?.UserName</td>
+                        <td>@task.Status</td>
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    Action
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">View</a></li>
+                                    <li><a class="dropdown-item" href="#">Edit</a></li>
+                                    <li>
+                                        <form method="post" action="/Home/DeleteTask">
+                                            <input type="hidden" name="id" value="@task.Id" />
+                                            <button type="submit" class="dropdown-item">Delete</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
 
+
+                    </tr>
+                }
             </tbody>
-
         </table>
     </div>
 </div>
 
-<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-    aria-hidden="true">
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg custom-modal-size">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Add Task</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
-                <div class="flx-row">
-                    <div class="">
-                        <label for="">Task Name:</label><br>
-                        <input type="text">
+                <form id="addTaskForm" method="post" action="/Home/CreateTask">
+                    <div class="flx-row">
+                        <div class="">
+                            <label for="taskName">Task Name:</label><br>
+                            <input type="text" id="taskName" name="taskName" required>
+                        </div>
+                        <div class="" style="margin-left: 1rem;">
+                            <label for="projectId">Project Name:</label><br>
+                            <select id="projectId" name="projectId" required>
+                                <option value="">Select Project</option>
+                                @foreach (var project in Model.Projects)
+                                {
+                                    <option value="@project.Id">@project.Name</option>
+                                }
+                            </select>
+                        </div>
                     </div>
-                    <div class="" style="margin-left: 1rem;">
-                        <label for="">Project Name:</label><br>
-                        <select name="cars" id="cars">
-                            <option value="volvo">Making a cake</option>
-                            <option value="saab">Make a hotdog</option>
-                            <option value="opel">Jonathan</option>
-                            <option value="audi">MeowMeow</option>
-                        </select>
-                    </div>
-                </div>
 
-                <div class="flx-row">
-                    <div class="">
-                        <label for="">Assign To:</label><br>
-                        <select name="cars" id="cars">
-                            <option value="volvo">Clint</option>
-                            <option value="saab">Mekko</option>
-                            <option value="opel">Jonathan</option>
-                            <option value="audi">MeowMeow</option>
-                        </select>
+                    <div class="flx-row">
+                        <div class="">
+                            <label for="assignedToId">Assign To:</label><br>
+                            <select id="assignedToId" name="assignedToId" required>
+                                <option value="">Select Member</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="" style="margin-left: 1rem;">
-                        <label for="">Due Date:</label><br>
-                        <input type="date">
+                    <div class="flx-row">
+                        <div>
+                            <label for="description">Description:</label><br>
+                            <textarea class="form-control text-area-desc" id="description" name="description" rows="3" required></textarea>
+                        </div>
                     </div>
-                </div>
-
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-<script>
 
-    document.getElementById("adminTask").classList.add("active");
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // When the project is selected
+        $('#projectId').on('change', function () {
+            var projectId = $(this).val();
+            
+            if (projectId) {
+                // Make an AJAX call to get members for the selected project
+                $.getJSON('/Home/GetProjectMembers', { projectId: projectId }, function (data) {
+                    // Clear the "Assigned To" dropdown
+                    $('#assignedToId').empty();
+                    $('#assignedToId').append('<option value="">Select Member</option>');
+                    
+                    // Populate the dropdown with the fetched members
+                    $.each(data, function (i, member) {
+                        $('#assignedToId').append('<option value="' + member.id + '">' + member.userName + '</option>');
+                    });
+                });
+            } else {
+                // If no project is selected, clear the "Assigned To" dropdown
+                $('#assignedToId').empty();
+                $('#assignedToId').append('<option value="">Select Member</option>');
+            }
+        });
+    });
 </script>
+

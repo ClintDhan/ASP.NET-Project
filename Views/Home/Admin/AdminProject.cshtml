@@ -5,6 +5,7 @@
 @section Title {
 Admin Projects
 }
+
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
   integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js"
@@ -16,22 +17,26 @@ Admin Projects
 
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+
 <div class="header-color"></div>
+
+<!-- Add Project Button -->
 <div class="btn-right">
-  <button type="button" class="btn btn-primary add-proj" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">
-    <i class="bi bi-plus-circle-fill"></i>Add Project
+  <button type="button" class="btn btn-primary add-proj" data-bs-toggle="modal" data-bs-target="#addProjectModal">
+    <i class="bi bi-plus-circle-fill"></i> Add Project
   </button>
 </div>
 
-<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+<!-- Add Project Modal -->
+<div class="modal fade" id="addProjectModal" tabindex="-1" role="dialog" aria-labelledby="addProjectLabel"
   aria-hidden="true">
   <div class="modal-dialog modal-lg custom-modal-size">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add Project</h5>
+        <h5 class="modal-title" id="addProjectLabel">Add Project</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="post" action="/Home/CreateProject"> <!-- Update with your actual controller -->
+      <form method="post" action="/Home/CreateProject">
         <div class="modal-body">
           <div class="flx-row">
             <div>
@@ -42,7 +47,7 @@ Admin Projects
               <label for="projectManagerId">Project Manager:</label><br>
               <select id="projectManagerId" name="projectManagerId" required>
                 <option value="">Select Project Manager</option>
-                @foreach (var manager in Model.ProjectManagers) // Assume you pass a list of project managers
+                @foreach (var manager in Model.ProjectManagers)
                 {
                   <option value="@manager.Id">@manager.UserName</option>
                 }
@@ -53,27 +58,26 @@ Admin Projects
           <div class="flx-row">
             <div>
               <label for="startDate">Start Date:</label><br>
-              <input type="date" id="startDate" value="@DateTime.Now.ToString("yyyy-MM-dd")">
-
+              <input type="date" id="startDate" name="startDate" value="@DateTime.Now.ToString("yyyy-MM-dd")"
+                required />
             </div>
             <div style="margin-left: 1rem;">
               <label for="endDate">Due Date:</label><br>
-              <input type="date" id="endDate" name="dueDate" required>
+              <input type="date" id="endDate" name="dueDate" required />
             </div>
           </div>
 
           <div class="flx-row">
-            <div>
-              <label for="">Members:</label><br>
-              <select class="selectpicker" multiple data-live-search="true" name="members" id="members" style="width: 25vw; !important">
-                @foreach (var user in ViewBag.Users)
-                {
-                  <option value="@user.Id">@user.UserName</option>
-                }
-              </select>
-
-            </div>
-          </div>
+  <div>
+    <label for="members">Members:</label><br>
+    <select class="selectpicker" multiple data-live-search="true" name="members" id="members">
+      @foreach (var user in ViewBag.Users)
+      {
+        <option value="@user.Id">@user.UserName</option>
+      }
+    </select>
+  </div>
+</div>
 
 
           <div class="flx-row">
@@ -93,13 +97,91 @@ Admin Projects
   </div>
 </div>
 
+<!-- Edit Project Modal -->
+<div class="modal fade" id="editProjectModal" tabindex="-1" role="dialog" aria-labelledby="editProjectLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg custom-modal-size">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editProjectLabel">Edit Project</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="/Home/EditProject">
+        <div class="modal-body">
+          <input type="hidden" id="projectId" name="projectId" />
+          <div class="flx-row">
+            <div>
+              <label for="editProjectName">Project Name:</label><br>
+              <input type="text" id="editProjectName" name="projectName" required />
+            </div>
+            <div style="margin-left: 1rem;">
+              <label for="editProjectManagerId">Project Manager:</label><br>
+              <select id="editProjectManagerId" name="projectManagerId" required>
+                <option value="">Select Project Manager</option>
+                @foreach (var manager in Model.ProjectManagers)
+                {
+                  <option value="@manager.Id">@manager.UserName</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="flx-row">
+            <div>
+              <label for="editStartDate">Start Date:</label><br>
+              <input type="date" id="editStartDate" name="startDate" required />
+            </div>
+            <div style="margin-left: 1rem;">
+              <label for="editEndDate">Due Date:</label><br>
+              <input type="date" id="editEndDate" name="endDate" required />
+            </div>
+          </div>
+
+          <div class="flx-row">
+            <div>
+              <label for="members">Members:</label><br>
+              <select class="selectpicker" multiple data-live-search="true" name="members" id="members">
+                @foreach (var user in ViewBag.Users)
+                {
+                  <option value="@user.Id">@user.UserName</option>
+                }
+              </select>
+            </div>
+            <div style="margin-left: 1rem;">
+              <label for="editStatus">Active Status:</label><br>
+              <select name="status" id="editStatus">
+                <option value="Pending">Pending</option>
+                <option value="InProgress">In Progress</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flx-row">
+            <div>
+              <label for="editDescription">Description:</label><br>
+              <textarea class="form-control text-area-desc" id="editDescription" name="description" rows="3"
+                required></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Project List Table -->
 <div class="project-container">
   <div class="scroll-container">
     <table id="example" class="table table-striped" style="width:100%">
       <thead>
         <tr>
           <th>#</th>
-          <th style="width: 10vw;">Project Name</th>
+          <th>Project Name</th>
           <th>Start Date</th>
           <th>Due Date</th>
           <th>Status</th>
@@ -107,26 +189,22 @@ Admin Projects
         </tr>
       </thead>
       <tbody>
-        @foreach (var project in Model.Projects) // Assume you pass a list of projects
+        @foreach (var project in Model.Projects)
         {
           <tr>
             <td style="text-align: center;">@project.Id</td>
             <td>@project.Name</td>
-            <td>@project.StartDate.ToShortDateString()</td>
-            <td>@project.EndDate.ToShortDateString()</td>
+            <td>@project.StartDate.ToString("yyyy-MM-dd")</td>
+            <td>@project.EndDate.ToString("yyyy-MM-dd")</td>
             <td>@project.Status</td>
             <td>
-              <div class="btn-group">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                  aria-expanded="false">
-                  Action
-                </button>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">View</a></li>
-                  <li><a class="dropdown-item" href="#">Edit</a></li>
-                  <li><a class="dropdown-item" href="#">Delete</a></li>
-                </ul>
-              </div>
+              <button class="btn btn-warning edit-project" data-project-id="@project.Id" data-project-name="@project.Name"
+                data-project-manager-id="@project.ProjectManagerId"
+                data-start-date="@project.StartDate.ToString("yyyy-MM-dd")"
+                data-end-date="@project.EndDate.ToString("yyyy-MM-dd")" data-description="@project.Description"
+                data-is-active="@project.IsActive">
+                Edit
+              </button>
             </td>
           </tr>
         }
@@ -137,10 +215,37 @@ Admin Projects
 
 @section Scripts {
   <script>
-    document.querySelector('.collapse-btn').classList.add("active");
-    document.querySelector('.bi-send-fill').style.color = "white";
-    document.querySelector('.collapse-btn').style.color = "white";
-    $('select').selectpicker();
+    $(document).ready(function () {
+      // Clear fields when Add Project modal is opened
+      $('#addProjectModal').on('show.bs.modal', function () {
+        $('#projectName').val('');
+        $('#startDate').val(new Date().toISOString().split('T')[0]); // Set current date
+        $('#endDate').val('');
+        $('#description').val('');
+        // Clear other fields if any...
+      });
 
+      // Populate fields when Edit Project modal is opened
+      $(document).on('click', '.edit-project', function () {
+        var projectId = $(this).data('project-id');
+        var projectName = $(this).data('project-name');
+        var projectManagerId = $(this).data('project-manager-id');
+        var startDate = $(this).data('start-date');
+        var endDate = $(this).data('end-date');
+        var description = $(this).data('description');
+        var isActive = $(this).data('is-active');
+
+        $('#projectId').val(projectId);
+        $('#editProjectName').val(projectName);
+        $('#editProjectManagerId').val(projectManagerId);
+        $('#editStartDate').val(startDate);
+        $('#editEndDate').val(endDate);
+        $('#editDescription').val(description);
+        $('#editStatus').val(isActive ? 'InProgress' : 'Completed'); // Set the value based on isActive
+
+        // Show the edit modal
+        $('#editProjectModal').modal('show');
+      });
+    });
   </script>
 }

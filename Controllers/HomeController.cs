@@ -1,7 +1,11 @@
+using ProjectTask = ASP.NET_Project.Models.Task; // Alias for the Task model
+
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ASP.NET_Project.Models;
 using Microsoft.EntityFrameworkCore;
+using TaskStatus = ASP.NET_Project.Models.TaskStatus;
+
 namespace ASP.NET_Project.Controllers
 {
     public class HomeController : Controller
@@ -21,31 +25,37 @@ namespace ASP.NET_Project.Controllers
         }
 
         [HttpPost]
-public IActionResult Login(string email, string password)
-{
-    var user = _context.Users.SingleOrDefault(u => u.Email == email && u.Password == password);
-
-    if (user != null && user.IsActive)
-    {
-        // Store user ID in session
-        HttpContext.Session.SetInt32("UserId", user.Id);
-
-        if (user.RoleId == 1 || user.RoleId == 3)
+        public IActionResult Login(string email, string password)
         {
-            return RedirectToAction("AdminDashboard");
+            var user = _context.Users.SingleOrDefault(u => u.Email == email && u.Password == password);
+
+            if (user != null && user.IsActive)
+            {
+                // Store user ID in session
+                HttpContext.Session.SetInt32("UserId", user.Id);
+
+                if (user.RoleId == 1 || user.RoleId == 3)
+                {
+                    return RedirectToAction("AdminDashboard");
+                }
+                else if (user.RoleId == 2)
+                {
+                    return RedirectToAction("UserDashboard");
+                }
+            }
+
+            ViewBag.ErrorMessage = "Invalid email or password.";
+            return View();
         }
-        else if (user.RoleId == 2)
+
+        public IActionResult Logout()
         {
-            return RedirectToAction("UserDashboard");
+            // Clear the session
+            HttpContext.Session.Clear();
+
+            // Redirect to the login page
+            return RedirectToAction("Login");
         }
-    }
-
-    ViewBag.ErrorMessage = "Invalid email or password.";
-    return View();
-}
-
-
-
 
         public IActionResult Signup()
         {
@@ -99,24 +109,22 @@ public IActionResult Login(string email, string password)
             };
 
             var users = _context.Users
-       .Where(u => u.RoleId == 2 && !_context.Tasks.Any(t => t.AssignedToId == u.Id))
-       .ToList();
+     .Where(u => u.RoleId == 2)
+     .ToList();
 
             ViewBag.Users = users;
 
             return View("~/Views/Home/Admin/AdminProject.cshtml", model);
         }
 
-
-      [HttpPost]
-public IActionResult CreateProject(string projectName, int projectManagerId, List<int> userIds, DateTime dueDate, string description)
+[HttpPost]
+public IActionResult CreateProject(string projectName, int projectManagerId, List<int> members, DateTime dueDate, string description)
 {
     // Retrieve the user ID from session
     var userId = HttpContext.Session.GetInt32("UserId");
 
     if (userId == null)
     {
-        // Handle the case where the user is not logged in or session expired
         return RedirectToAction("Login");
     }
 
@@ -132,16 +140,17 @@ public IActionResult CreateProject(string projectName, int projectManagerId, Lis
         CreatedById = userId.Value // Assign the current user as the creator
     };
 
-    _context.Projects.Add(project);
-    _context.SaveChanges();
-
-    // Assign users to the project
-    var usersToAdd = _context.Users.Where(u => userIds.Contains(u.Id)).ToList();
-    foreach (var user in usersToAdd)
+    // Add selected user IDs to the Users collection of the project
+    foreach (var memberId in members)
     {
-        project.Users.Add(user);
+        var user = _context.Users.Find(memberId);
+        if (user != null)
+        {
+            project.Users.Add(user); // Add user to the project's Users collection
+        }
     }
 
+    _context.Projects.Add(project);
     _context.SaveChanges();
 
     return RedirectToAction("AdminProject");
@@ -149,10 +158,128 @@ public IActionResult CreateProject(string projectName, int projectManagerId, Lis
 
 
 
+
+        [HttpPost]
+        public ActionResult DeleteTask(int id)
+        {
+            // Find the task by id and delete it
+            var task = _context.Tasks.Find(id);
+            if (task != null)
+            {
+                _context.Tasks.Remove(task);
+                _context.SaveChanges();
+            }
+
+            // Redirect back to the task list after deletion
+            return RedirectToAction("AdminTask"); // Adjust this to redirect to the appropriate action
+        }
+        [HttpGet]
+        public IActionResult GetProjectMembers(int projectId)
+        {
+            // Fetch the members assigned to the selected project with RoleId = 2 (members)
+            var members = _context.Projects
+                .Include(p => p.Users)
+                .Where(p => p.Id == projectId)
+                .SelectMany(p => p.Users)
+                .Where(u => u.RoleId == 2) // Only users with RoleId 2
+                .Select(u => new { u.Id, u.UserName }) // Only return the necessary fields
+                .ToList();
+
+            return Json(members);
+        }
+
+
+
+
+        [HttpPost]
+        public IActionResult EditProject(int projectId, string projectName, int projectManagerId, List<int> members, DateTime startDate, DateTime endDate, string description, ProjectStatus status)
+        {
+            // Retrieve the project from the database
+            var project = _context.Projects.Include(p => p.Users).SingleOrDefault(p => p.Id == projectId);
+
+            if (project == null)
+            {
+                // Handle case when project is not found
+                return NotFound();
+            }
+
+            // Update the project details
+            project.Name = projectName;
+            project.ProjectManagerId = projectManagerId;
+            project.StartDate = startDate;
+
+            // Ensure endDate is properly set and log the value
+            if (endDate != DateTime.MinValue)
+            {
+                project.EndDate = endDate;
+            }
+            else
+            {
+                // Log or handle the case when endDate is invalid
+                _logger.LogWarning($"Project ID: {projectId} - End Date not updated. Received end date: {endDate}");
+            }
+
+            project.Description = description;
+            project.Status = status;
+
+            // Clear existing members and update with new selection
+            project.Users.Clear();
+            var selectedUsers = _context.Users.Where(u => members.Contains(u.Id)).ToList();
+            foreach (var user in selectedUsers)
+            {
+                project.Users.Add(user);
+            }
+
+            // Save changes to the database
+            _context.SaveChanges();
+
+            // Redirect back to the project list page
+            return RedirectToAction("AdminProject");
+        }
+
+
+
+
+
         public IActionResult AdminTask()
         {
-            return View("~/Views/Home/Admin/AdminTask.cshtml");
+            var model = new AdminTasksViewModel
+            {
+                Tasks = _context.Tasks.Include(t => t.Project).Include(t => t.AssignedTo).ToList(), // Include project and assigned user
+                Projects = _context.Projects.ToList(), // Get all projects
+                Users = _context.Users.Where(u => u.RoleId == 2).ToList() // Only get users with RoleId 2
+            };
+
+            return View("~/Views/Home/Admin/AdminTask.cshtml", model);
         }
+
+
+        [HttpPost]
+        public IActionResult CreateTask(string taskName, string description, int projectId, int assignedToId)
+        {
+            if (string.IsNullOrEmpty(taskName) || projectId <= 0 || assignedToId <= 0)
+            {
+                return BadRequest("Invalid data.");
+            }
+
+            var task = new ProjectTask
+            {
+                Name = taskName,
+                Description = description,
+                ProjectId = projectId,
+                AssignedToId = assignedToId,
+                Status = TaskStatus.Pending
+            };
+
+            _context.Tasks.Add(task);
+            _context.SaveChanges();
+
+            // Return JSON response if the request was made via AJAX
+            return RedirectToAction("AdminTask");
+        }
+
+
+
 
         public IActionResult AdminUser()
         {
@@ -162,6 +289,7 @@ public IActionResult CreateProject(string projectName, int projectManagerId, Lis
             // Pass the list of users to the view
             return View("~/Views/Home/Admin/AdminUser.cshtml", users);
         }
+
         [HttpPost]
         public IActionResult UpdateUser(User user)
         {
@@ -182,10 +310,6 @@ public IActionResult CreateProject(string projectName, int projectManagerId, Lis
             // Redirect to the user management page
             return RedirectToAction("AdminUser");
         }
-
-
-
-
 
         public IActionResult AdminCompleted()
         {
@@ -208,6 +332,14 @@ public IActionResult CreateProject(string projectName, int projectManagerId, Lis
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
+
+    internal class AdminTasksViewModel
+    {
+        public List<ASP.NET_Project.Models.Task> Tasks { get; set; } // Fully qualify Task
+        public List<Project> Projects { get; set; }
+        public List<User> Users { get; set; }
+    }
+
 
     internal class AdminProjectsViewModel
     {

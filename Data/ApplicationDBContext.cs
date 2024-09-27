@@ -15,24 +15,24 @@ namespace ASP.NET_Project.Models
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Progress> Progresses { get; set; }
 
-      protected override void OnModelCreating(ModelBuilder modelBuilder)
-{
-    base.OnModelCreating(modelBuilder);
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
 
-    // Seed roles
-    modelBuilder.Entity<Role>().HasData(
-        new Role { RoleId = 1, RoleName = "Admin" },
-        new Role { RoleId = 2, RoleName = "User" },
-        new Role { RoleId = 3, RoleName = "ProjectManager" }
-    );
+            // Seed roles
+            modelBuilder.Entity<Role>().HasData(
+                new Role { RoleId = 1, RoleName = "Admin" },
+                new Role { RoleId = 2, RoleName = "User" },
+                new Role { RoleId = 3, RoleName = "ProjectManager" }
+            );
 
-    // Many-to-many relationship between User and Project
+             // Many-to-many relationship between User and Project
     modelBuilder.Entity<User>()
         .HasMany(u => u.Projects)
         .WithMany(p => p.Users)
         .UsingEntity(j => j.ToTable("UserProjects"));
 
-    // Configure CreatedBy and ProjectManager relationships
+    // Configure other relationships (e.g., CreatedBy, ProjectManager)
     modelBuilder.Entity<Project>()
         .HasOne(p => p.CreatedBy)
         .WithMany()
@@ -44,7 +44,6 @@ namespace ASP.NET_Project.Models
         .WithMany()
         .HasForeignKey(p => p.ProjectManagerId)
         .OnDelete(DeleteBehavior.Restrict);
-}
-
+    }
     }
 }
