@@ -136,3 +136,4 @@ D:\xampp4\htdocs\ASP.NET-Project\bin\Debug\net8.0\runtimes\win\lib\net6.0\System
 D:\xampp4\htdocs\ASP.NET-Project\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
 D:\xampp4\htdocs\ASP.NET-Project\obj\Debug\net8.0\ASP.NET-Project.csproj.AssemblyReference.cache
 D:\xampp4\htdocs\ASP.NET-Project\obj\Debug\net8.0\ASP.NET-.BB937707.Up2Date
+D:\xampp4\htdocs\ASP.NET-Project\bin\Debug\net8.0\Newtonsoft.Json.dll
