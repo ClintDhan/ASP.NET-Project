@@ -193,16 +193,31 @@ Admin Projects
             <td>@project.EndDate.ToString("yyyy-MM-dd")</td>
             <td>@project.Status</td>
             <td>
-              <button class="btn btn-warning edit-project" data-project-id="@project.Id" data-project-name="@project.Name"
-                data-project-manager-id="@project.ProjectManagerId"
-                data-start-date="@project.StartDate.ToString("yyyy-MM-dd")"
-                data-end-date="@project.EndDate.ToString("yyyy-MM-dd")"
-                data-description="@project.Description"
-                data-status="@project.Status" data-bs-toggle="modal" data-bs-target="#editProjectModal">
-                Edit
-              </button>
-              <button class="btn btn-danger delete-project" data-project-id="@project.Id">Delete</button>
-            </td>
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            Action
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+    <a class="dropdown-item" href="@Url.Action("ViewProject", "Home", new { projectId = project.Id })">
+        View
+    </a>
+</li>
+
+            <li>
+                <button class="dropdown-item btn btn-warning edit-project" data-project-id="@project.Id" data-project-name="@project.Name"
+                    data-project-manager-id="@project.ProjectManagerId"
+                    data-start-date="@project.StartDate.ToString("yyyy-MM-dd")"
+                    data-end-date="@project.EndDate.ToString("yyyy-MM-dd")"
+                    data-description="@project.Description"
+                    data-status="@project.Status" data-bs-toggle="modal" data-bs-target="#editProjectModal">
+                    Edit
+                </button>
+            </li>
+        </ul>
+    </div>
+</td>
+
           </tr>
         }
       </tbody>

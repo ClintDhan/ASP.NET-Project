@@ -3,7 +3,7 @@
 }
 
 @section Title {
-View Project
+    View Project
 }
 
 <div class="header-color"></div>
@@ -11,29 +11,32 @@ View Project
     <div class="project-grid">
         <div>
             <label for="">Project Name:</label> <br>
-            <p>ambot</p>
+            <p>@Model.ProjectName</p>
         </div>
         <div>
             <label for="">Project Manager:</label>
-            <p>Basta haha</p>
+            <p>@Model.ProjectManager</p>
         </div>
         <div class="to-expand">
             <label for="">Project Members:</label>
-            <p>blahblahblah</p>
+            <p>@string.Join(", ", Model.ProjectMembers)</p>
         </div>
         <div>
             <label for="">Start Date:</label>
-            <p>HHAHAHA SECRET</p>
+            <p>@Model.StartDate.ToString("MMMM dd, yyyy")</p>
         </div>
         <div>
             <label for="">Due Date:</label>
-            <p>sekreto para gwapo</p>
+            <p>@Model.DueDate.ToString("MMMM dd, yyyy")</p>
         </div>
         <div class="to-expand-desc">
             <label for="">Description:</label>
-            <p>HAHAHAHAHHAHAHAHAHAHHAHHA I NEED SLEEP</p>
+            <p>@Model.Description</p>
         </div>
     </div>
+
+    <!-- Tasks and Progress tables can remain unchanged -->
+
     <div class="table-container">
         <div class="table-header">
             <p>Tasks</p>

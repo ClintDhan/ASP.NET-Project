@@ -350,6 +350,43 @@ public IActionResult EditProject(int projectId, string projectName, int projectM
         {
             return View("~/Views/Home/ProjectView.cshtml");
         }
+        public IActionResult ViewProject(int projectId)
+{
+    // Retrieve project details from the database
+    var project = _context.Projects
+        .Include(p => p.ProjectManager)   // Include the project manager details
+        .Include(p => p.Users)            // Include project members
+        .SingleOrDefault(p => p.Id == projectId);
+
+    if (project == null)
+    {
+        return NotFound(); // Handle case when project is not found
+    }
+
+    // Create a view model to pass data to the view
+    var model = new ProjectViewModel
+    {
+        ProjectName = project.Name,
+        ProjectManager = project.ProjectManager.UserName,
+        ProjectMembers = project.Users.Select(u => u.UserName).ToList(),
+        StartDate = project.StartDate,
+        DueDate = project.EndDate,
+        Description = project.Description
+    };
+
+    return View("ProjectView", model); // Redirect to the ProjectView with the data
+}
+public class ProjectViewModel
+{
+    public string ProjectName { get; set; }
+    public string ProjectManager { get; set; }
+    public List<string> ProjectMembers { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime DueDate { get; set; }
+    public string Description { get; set; }
+}
+
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
