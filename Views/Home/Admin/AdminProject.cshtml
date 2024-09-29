@@ -14,10 +14,68 @@ Admin Projects
   integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
 <div class="header-color"></div>
-<div class="btn-right">
-  <button type="button" class="btn btn-primary add-proj" data-bs-toggle="modal" data-bs-target="#addProjectModal">
-    <i class="bi bi-plus-circle-fill"></i> Add Project
-  </button>
+
+<div class="card-container">
+  <div class="btn-right">
+    <button type="button" class="btn btn-primary add-proj" data-bs-toggle="modal" data-bs-target="#addProjectModal">
+      <i class="bi bi-plus-circle-fill"></i>Add Project
+    </button>
+  </div>
+  <!-- Project List Table -->
+  <div class="project-container">
+    <div class="scroll-container">
+      <table id="example" class="table table-striped" style="width:100%">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Project Name</th>
+            <th>Start Date</th>
+            <th>Due Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach (var project in Model.Projects)
+          {
+            <tr>
+              <td style="text-align: center;">@project.Id</td>
+              <td>@project.Name</td>
+              <td>@project.StartDate.ToString("yyyy-MM-dd")</td>
+              <td>@project.EndDate.ToString("yyyy-MM-dd")</td>
+              <td>@project.Status</td>
+              <td>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    Action
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a class="dropdown-item" href="@Url.Action("ViewProject", "Home", new { projectId = project.Id })">
+                        View
+                      </a>
+                    </li>
+
+                    <li>
+                      <button class="dropdown-item btn btn-warning edit-project" data-project-id="@project.Id"
+                        data-project-name="@project.Name" data-project-manager-id="@project.ProjectManagerId"
+                        data-start-date="@project.StartDate.ToString("yyyy-MM-dd")"
+                        data-end-date="@project.EndDate.ToString("yyyy-MM-dd")" data-description="@project.Description"
+                        data-status="@project.Status" data-bs-toggle="modal" data-bs-target="#editProjectModal">
+                        Edit
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <!-- Add Project Modal -->
@@ -51,7 +109,8 @@ Admin Projects
           <div class="flx-row">
             <div>
               <label for="startDate">Start Date:</label><br>
-              <input type="date" id="startDate" name="startDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+              <input type="date" id="startDate" name="startDate" value="@DateTime.Now.ToString("yyyy-MM-dd")"
+                required />
             </div>
             <div style="margin-left: 1rem;">
               <label for="endDate">Due Date:</label><br>
@@ -74,7 +133,8 @@ Admin Projects
           <div class="flx-row">
             <div>
               <label for="description">Description:</label><br>
-              <textarea class="form-control text-area-desc" id="description" name="description" rows="3" required></textarea>
+              <textarea class="form-control text-area-desc" id="description" name="description" rows="3"
+                required></textarea>
             </div>
           </div>
         </div>
@@ -149,7 +209,8 @@ Admin Projects
           <div class="flx-row">
             <div>
               <label for="editDescription">Description:</label><br>
-              <textarea class="form-control text-area-desc" id="editDescription" name="description" rows="3" required></textarea>
+              <textarea class="form-control text-area-desc" id="editDescription" name="description" rows="3"
+                required></textarea>
             </div>
           </div>
         </div>
@@ -169,61 +230,7 @@ Admin Projects
 </div>
 
 
-<!-- Project List Table -->
-<div class="project-container">
-  <div class="scroll-container">
-    <table id="example" class="table table-striped" style="width:100%">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Project Name</th>
-          <th>Start Date</th>
-          <th>Due Date</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach (var project in Model.Projects)
-        {
-          <tr>
-            <td style="text-align: center;">@project.Id</td>
-            <td>@project.Name</td>
-            <td>@project.StartDate.ToString("yyyy-MM-dd")</td>
-            <td>@project.EndDate.ToString("yyyy-MM-dd")</td>
-            <td>@project.Status</td>
-            <td>
-    <div class="btn-group">
-        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            Action
-        </button>
-        <ul class="dropdown-menu">
-          <li>
-    <a class="dropdown-item" href="@Url.Action("ViewProject", "Home", new { projectId = project.Id })">
-        View
-    </a>
-</li>
 
-            <li>
-                <button class="dropdown-item btn btn-warning edit-project" data-project-id="@project.Id" data-project-name="@project.Name"
-                    data-project-manager-id="@project.ProjectManagerId"
-                    data-start-date="@project.StartDate.ToString("yyyy-MM-dd")"
-                    data-end-date="@project.EndDate.ToString("yyyy-MM-dd")"
-                    data-description="@project.Description"
-                    data-status="@project.Status" data-bs-toggle="modal" data-bs-target="#editProjectModal">
-                    Edit
-                </button>
-            </li>
-        </ul>
-    </div>
-</td>
-
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
-</div>
 
 @section Scripts {
   <script>
@@ -235,13 +242,13 @@ Admin Projects
       $('#addMemberButton').on('click', function () {
         memberCount++;
         $('#membersContainer').append(`
-          <select name="members[]" id="members${memberCount}" required>
-            @foreach (var user in ViewBag.Users)
-            {
-              <option value="@user.Id">@user.UserName</option>
-            }
-          </select><br>
-        `);
+              <select name="members[]" id="members${memberCount}" required>
+    @foreach (var user in ViewBag.Users)
+    {
+                      <option value="@user.Id">@user.UserName</option>
+    }
+              </select><br>
+            `);
       });
 
       // Remove Member Button for Add Project Modal
@@ -270,7 +277,7 @@ Admin Projects
         $('#editEndDate').val(endDate);
         $('#editDescription').val(description);
 
-        
+
 
         // Fetch and populate members for the selected project
         $.ajax({
@@ -279,10 +286,10 @@ Admin Projects
           success: function (members) {
             members.forEach(member => {
               $('#editMembersContainer').append(`
-                <select name="members[]" id="editMembers${editMemberCount + 1}" required>
-                  <option value="${member.Id}" selected>${member.UserName}</option>
-                </select><br>
-              `);
+                    <select name="members[]" id="editMembers${editMemberCount + 1}" required>
+                      <option value="${member.Id}" selected>${member.UserName}</option>
+                    </select><br>
+                  `);
               editMemberCount++; // Increment the member count
             });
           },
@@ -298,13 +305,13 @@ Admin Projects
       $('#addEditMemberButton').on('click', function () {
         editMemberCount++;
         $('#editMembersContainer').append(`
-          <select name="members[]" id="editMembers${editMemberCount}" required>
-            @foreach (var user in ViewBag.Users)
-            {
-              <option value="@user.Id">@user.UserName</option>
-            }
-          </select><br>
-        `);
+              <select name="members[]" id="editMembers${editMemberCount}" required>
+    @foreach (var user in ViewBag.Users)
+    {
+                      <option value="@user.Id">@user.UserName</option>
+    }
+              </select><br>
+            `);
       });
 
       // Remove Member Button for Edit Project Modal
@@ -319,4 +326,3 @@ Admin Projects
     });
   </script>
 }
-

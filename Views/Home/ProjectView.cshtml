@@ -3,124 +3,127 @@
 }
 
 @section Title {
-    View Project
+View Project
 }
 
 <div class="header-color"></div>
-<div class="project-container users-container scroll-content" style="height: 75vh; padding: 1rem;">
-    <div class="project-grid">
-        <div>
-            <label for="">Project Name:</label> <br>
-            <p>@Model.ProjectName</p>
+<div class="card-container">
+    <div class="project-container users-container scroll-container"
+        style="max-height: 70vh; padding: 1rem; margin-top: 8vh;">
+        <div class="project-grid">
+            <div>
+                <label for="">Project Name:</label> <br>
+                <p>@Model.ProjectName</p>
+            </div>
+            <div>
+                <label for="">Project Manager:</label>
+                <p>@Model.ProjectManager</p>
+            </div>
+            <div class="to-expand">
+                <label for="">Project Members:</label>
+                <p>@string.Join(", ", Model.ProjectMembers)</p>
+            </div>
+            <div>
+                <label for="">Start Date:</label>
+                <p>@Model.StartDate.ToString("MMMM dd, yyyy")</p>
+            </div>
+            <div>
+                <label for="">Due Date:</label>
+                <p>@Model.DueDate.ToString("MMMM dd, yyyy")</p>
+            </div>
+            <div class="to-expand-desc">
+                <label for="">Description:</label>
+                <p>@Model.Description</p>
+            </div>
         </div>
-        <div>
-            <label for="">Project Manager:</label>
-            <p>@Model.ProjectManager</p>
-        </div>
-        <div class="to-expand">
-            <label for="">Project Members:</label>
-            <p>@string.Join(", ", Model.ProjectMembers)</p>
-        </div>
-        <div>
-            <label for="">Start Date:</label>
-            <p>@Model.StartDate.ToString("MMMM dd, yyyy")</p>
-        </div>
-        <div>
-            <label for="">Due Date:</label>
-            <p>@Model.DueDate.ToString("MMMM dd, yyyy")</p>
-        </div>
-        <div class="to-expand-desc">
-            <label for="">Description:</label>
-            <p>@Model.Description</p>
-        </div>
-    </div>
 
-    <!-- Tasks and Progress tables can remain unchanged -->
+        <!-- Tasks and Progress tables can remain unchanged -->
 
-    <div class="table-container">
-        <div class="table-header">
-            <p>Tasks</p>
-            <button>ADD TASK</button>
+        <div class="table-container">
+            <div class="table-header">
+                <p>Tasks</p>
+                <button>ADD TASK</button>
+            </div>
+            <table id="example3" class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Clint Rono</td>
+                        <td>Finished a tasked!</td>
+                        <td>9/10/2024</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Clint Rono</td>
+                        <td>Finished a tasked!</td>
+                        <td>9/10/2024</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Clint Rono</td>
+                        <td>Finished a tasked!</td>
+                        <td>9/10/2024</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Clint Rono</td>
+                        <td>Finished a tasked!</td>
+                        <td>9/10/2024</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <table class="dashboard-table table-scroll" style="width: 100%;">
-            <thead>
-                <tr>
-                <th>No.</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Clint Rono</td>
-                    <td>Finished a tasked!</td>
-                    <td>9/10/2024</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Clint Rono</td>
-                    <td>Finished a tasked!</td>
-                    <td>9/10/2024</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Clint Rono</td>
-                    <td>Finished a tasked!</td>
-                    <td>9/10/2024</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Clint Rono</td>
-                    <td>Finished a tasked!</td>
-                    <td>9/10/2024</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
 
-    <div class="table-container">
-        <div class="table-header">
-            <p>Progress</p>
-            <button>Add Progress</button>
+        <div class="table-container">
+            <div class="table-header">
+                <p>Progress</p>
+                <button>Add Progress</button>
+            </div>
+            <table id="example2" class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Clint Rono</td>
+                        <td>Finished a tasked!</td>
+                        <td>9/10/2024</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Clint Rono</td>
+                        <td>Finished a tasked!</td>
+                        <td>9/10/2024</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Clint Rono</td>
+                        <td>Finished a tasked!</td>
+                        <td>9/10/2024</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Clint Rono</td>
+                        <td>Finished a tasked!</td>
+                        <td>9/10/2024</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <table class="dashboard-table table-scroll" style="width: 100%;">
-            <thead>
-                <tr>
-                <th>No.</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Clint Rono</td>
-                    <td>Finished a tasked!</td>
-                    <td>9/10/2024</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Clint Rono</td>
-                    <td>Finished a tasked!</td>
-                    <td>9/10/2024</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Clint Rono</td>
-                    <td>Finished a tasked!</td>
-                    <td>9/10/2024</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Clint Rono</td>
-                    <td>Finished a tasked!</td>
-                    <td>9/10/2024</td>
-                </tr>
-            </tbody>
-        </table>
     </div>
 </div>
 
