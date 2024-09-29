@@ -117,47 +117,47 @@ namespace ASP.NET_Project.Controllers
             return View("~/Views/Home/Admin/AdminProject.cshtml", model);
         }
 
-[HttpPost]
-public IActionResult CreateProject(string projectName, int projectManagerId, List<int> members, DateTime dueDate, string description)
-{
-    // Retrieve the user ID from session
-    var userId = HttpContext.Session.GetInt32("UserId");
-
-    if (userId == null)
-    {
-        return RedirectToAction("Login");
-    }
-
-    // Create a new project
-    var project = new Project
-    {
-        Name = projectName,
-        StartDate = DateTime.Now,
-        EndDate = dueDate,
-        Description = description,
-        Status = ProjectStatus.Pending,
-        ProjectManagerId = projectManagerId,
-        CreatedById = userId.Value // Assign the current user as the creator
-    };
-
-    // Check if members list is not null and contains valid IDs
-    if (members != null && members.Count > 0)
-    {
-        foreach (var memberId in members)
+        [HttpPost]
+        public IActionResult CreateProject(string projectName, int projectManagerId, List<int> members, DateTime dueDate, string description)
         {
-            var user = _context.Users.Find(memberId);
-            if (user != null)
+            // Retrieve the user ID from session
+            var userId = HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
             {
-                project.Users.Add(user); // Add user to the project's Users collection
+                return RedirectToAction("Login");
             }
+
+            // Create a new project
+            var project = new Project
+            {
+                Name = projectName,
+                StartDate = DateTime.Now,
+                EndDate = dueDate,
+                Description = description,
+                Status = ProjectStatus.Pending,
+                ProjectManagerId = projectManagerId,
+                CreatedById = userId.Value // Assign the current user as the creator
+            };
+
+            // Check if members list is not null and contains valid IDs
+            if (members != null && members.Count > 0)
+            {
+                foreach (var memberId in members)
+                {
+                    var user = _context.Users.Find(memberId);
+                    if (user != null)
+                    {
+                        project.Users.Add(user); // Add user to the project's Users collection
+                    }
+                }
+            }
+
+            _context.Projects.Add(project);
+            _context.SaveChanges();
+
+            return RedirectToAction("AdminProject");
         }
-    }
-
-    _context.Projects.Add(project);
-    _context.SaveChanges();
-
-    return RedirectToAction("AdminProject");
-}
 
 
 
@@ -177,87 +177,84 @@ public IActionResult CreateProject(string projectName, int projectManagerId, Lis
             // Redirect back to the task list after deletion
             return RedirectToAction("AdminTask"); // Adjust this to redirect to the appropriate action
         }
-       [HttpGet]
-public JsonResult GetProjectMembers(int projectId)
-{
-    var members = _context.Projects
-        .Where(p => p.Id == projectId)
-        .SelectMany(p => p.Users.Select(u => new { Id = u.Id, UserName = u.UserName }))
-        .ToList();
 
-    return Json(members);
-}
-
-
-
-
-
-
-    [HttpPost]
-public IActionResult EditProject(int projectId, string projectName, int projectManagerId, List<int> members, DateTime startDate, DateTime endDate, string description, ProjectStatus status)
-{
-    // Retrieve the project from the database
-    var project = _context.Projects.Include(p => p.Users).SingleOrDefault(p => p.Id == projectId);
-
-    if (project == null)
-    {
-        return NotFound();
-    }
-
-    // Validate start and end dates
-    if (endDate < startDate)
-    {
-        ModelState.AddModelError("EndDate", "Due date cannot be before the start date.");
-    }
-
-    if (startDate > endDate)
-    {
-        ModelState.AddModelError("StartDate", "Start date cannot be after the due date.");
-    }
-
-    // If there are validation errors, return to the view
-    if (!ModelState.IsValid)
-    {
-        // Optionally, reload the project data for the view model
-        var viewModel = new EditProjectViewModel
-        {
-            ProjectId = project.Id,
-            ProjectName = project.Name,
-            ProjectManagerId = project.ProjectManagerId,
-            StartDate = project.StartDate,
-            EndDate = project.EndDate,
-            Description = project.Description,
-            Status = project.Status,
-            Members = _context.Users.Where(u => u.RoleId == 2).ToList() // Get valid users for selection
-        };
         
-        return View(viewModel); // Return the view with the existing project data and validation errors
-    }
+        [HttpGet]
+        public JsonResult GetProjectMembers(int projectId)
+        {
+            var members = _context.Projects
+                .Where(p => p.Id == projectId)
+                .SelectMany(p => p.Users.Select(u => new { Id = u.Id, UserName = u.UserName }))
+                .ToList();
 
-    // Update the project details
-    project.Name = projectName;
-    project.ProjectManagerId = projectManagerId;
-    project.StartDate = startDate;
+            return Json(members);
+        }
 
-    // Log and validate endDate
-    project.EndDate = endDate; // Set endDate without checking again, as it has been validated
-    project.Description = description;
-    project.Status = status;
+        [HttpPost]
+        public IActionResult EditProject(int projectId, string projectName, int projectManagerId, List<int> members, DateTime startDate, DateTime endDate, string description, ProjectStatus status, bool isActive)
+        {
+            // Retrieve the project from the database
+            var project = _context.Projects.Include(p => p.Users).SingleOrDefault(p => p.Id == projectId);
 
-    // Clear existing members and update with new selection
-    project.Users.Clear();
-    var selectedUsers = _context.Users.Where(u => members.Contains(u.Id)).ToList();
-    foreach (var user in selectedUsers)
-    {
-        project.Users.Add(user);
-    }
+            if (project == null)
+            {
+                return NotFound();
+            }
 
-    // Save changes to the database
-    _context.SaveChanges();
+            // Validate start and end dates
+            if (endDate < startDate)
+            {
+                ModelState.AddModelError("EndDate", "Due date cannot be before the start date.");
+            }
 
-    // Redirect back to the project list page
-    return RedirectToAction("AdminProject");
-}
+            if (startDate > endDate)
+            {
+                ModelState.AddModelError("StartDate", "Start date cannot be after the due date.");
+            }
+
+            // If there are validation errors, return to the view
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new EditProjectViewModel
+                {
+                    ProjectId = project.Id,
+                    ProjectName = project.Name,
+                    ProjectManagerId = project.ProjectManagerId,
+                    StartDate = project.StartDate,
+                    EndDate = project.EndDate,
+                    Description = project.Description,
+                    Status = project.Status,
+                    IsActive = project.IsActive,
+                    Members = _context.Users.Where(u => u.RoleId == 2).ToList() // Get valid users for selection
+                };
+
+                return View(viewModel);
+
+            }
+
+            // Update the project details
+            project.Name = projectName;
+            project.ProjectManagerId = projectManagerId;
+            project.StartDate = startDate;
+            project.EndDate = endDate;
+            project.Description = description;
+            project.Status = status;
+            project.IsActive = isActive;
+
+            // Update project members
+            project.Users.Clear();
+            var selectedUsers = _context.Users.Where(u => members.Contains(u.Id)).ToList();
+            foreach (var user in selectedUsers)
+            {
+                project.Users.Add(user);
+            }
+
+            // Save changes to the database
+            _context.SaveChanges();
+
+            return RedirectToAction("AdminProject");
+        }
+
 
 
 
@@ -346,45 +343,79 @@ public IActionResult EditProject(int projectId, string projectName, int projectM
             return View("~/Views/Home/User/UserDashboard.cshtml");
         }
 
-        public IActionResult ProjectView()
+        public IActionResult ProjectView(int projectId)
         {
-            return View("~/Views/Home/ProjectView.cshtml");
+            // Retrieve project details along with its tasks
+            var project = _context.Projects
+                .Include(p => p.ProjectManager) // Include the project manager details
+                .Include(p => p.Users)          // Include project members
+                .Include(p => p.Tasks)          // Include tasks for the project
+                .SingleOrDefault(p => p.Id == projectId);
+
+            if (project == null)
+            {
+                return NotFound(); // Handle case when project is not found
+            }
+
+            // Create a view model to pass data to the view
+            var model = new ProjectViewModel
+            {
+                ProjectName = project.Name,
+                ProjectManager = project.ProjectManager.UserName,
+                ProjectMembers = project.Users.Select(u => u.UserName).ToList(),
+                StartDate = project.StartDate,
+                DueDate = project.EndDate,
+                Description = project.Description,
+                Tasks = project.Tasks.ToList() // Ensure this refers to your custom Task type
+            };
+
+            return View("ProjectView", model); // Redirect to the ProjectView with the data
         }
+
         public IActionResult ViewProject(int projectId)
-{
-    // Retrieve project details from the database
-    var project = _context.Projects
-        .Include(p => p.ProjectManager)   // Include the project manager details
-        .Include(p => p.Users)            // Include project members
-        .SingleOrDefault(p => p.Id == projectId);
+        {
+            // Retrieve project details from the database
+            var project = _context.Projects
+                .Include(p => p.ProjectManager)   // Include the project manager details
+                .Include(p => p.Users)
+                        .Include(p => p.Tasks) // Make sure to include tasks
+                                               // Include project members
+                .SingleOrDefault(p => p.Id == projectId);
 
-    if (project == null)
-    {
-        return NotFound(); // Handle case when project is not found
-    }
+            if (project == null)
+            {
+                return NotFound(); // Handle case when project is not found
+            }
 
-    // Create a view model to pass data to the view
-    var model = new ProjectViewModel
-    {
-        ProjectName = project.Name,
-        ProjectManager = project.ProjectManager.UserName,
-        ProjectMembers = project.Users.Select(u => u.UserName).ToList(),
-        StartDate = project.StartDate,
-        DueDate = project.EndDate,
-        Description = project.Description
-    };
+            // Create a view model to pass data to the view
+            var model = new ProjectViewModel
+            {
+                ProjectName = project.Name,
+                ProjectManager = project.ProjectManager.UserName,
+                ProjectMembers = project.Users.Select(u => u.UserName).ToList(),
+                StartDate = project.StartDate,
+                DueDate = project.EndDate,
+                Description = project.Description,
+                Tasks = project.Tasks.ToList() // Ensure this refers to your custom Task type
 
-    return View("ProjectView", model); // Redirect to the ProjectView with the data
-}
-public class ProjectViewModel
-{
-    public string ProjectName { get; set; }
-    public string ProjectManager { get; set; }
-    public List<string> ProjectMembers { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime DueDate { get; set; }
-    public string Description { get; set; }
-}
+            };
+
+            return View("ProjectView", model); // Redirect to the ProjectView with the data
+        }
+        public class ProjectViewModel
+        {
+            public string ProjectName { get; set; }
+            public string ProjectManager { get; set; }
+            public List<string> ProjectMembers { get; set; } = new List<string>(); // Initialize to avoid null
+            public DateTime StartDate { get; set; }
+            public DateTime DueDate { get; set; }
+            public string Description { get; set; }
+            public bool IsActive { get; set; } // Add this to the ProjectViewModel
+
+            public List<ASP.NET_Project.Models.Task> Tasks { get; set; } = new List<ASP.NET_Project.Models.Task>(); // Specify the full namespace
+        }
+
+
 
 
 
@@ -405,6 +436,7 @@ public class ProjectViewModel
         public string Description { get; set; }
         public ProjectStatus Status { get; set; }
         public List<User> Members { get; set; }
+        public bool IsActive { get; set; }
     }
 
     internal class AdminTasksViewModel

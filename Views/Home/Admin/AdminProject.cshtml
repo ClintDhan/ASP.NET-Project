@@ -32,6 +32,7 @@ Admin Projects
             <th>Start Date</th>
             <th>Due Date</th>
             <th>Status</th>
+            <th>Condition</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -44,6 +45,7 @@ Admin Projects
               <td>@project.StartDate.ToString("yyyy-MM-dd")</td>
               <td>@project.EndDate.ToString("yyyy-MM-dd")</td>
               <td>@project.Status</td>
+             <td>@(project.IsActive ? "Active" : "Inactive")</td>
               <td>
                 <div class="btn-group">
                   <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
@@ -204,6 +206,13 @@ Admin Projects
                 }
               </select>
             </div>
+            <div style="margin-left: 1rem;">
+              <label for="">Condition:</label>
+              <select name="IsActive" id="">
+                <option value="true">Active</option>
+                <option value="false">InActive</option>
+              </select>
+            </div>
           </div>
 
           <div class="flx-row">
@@ -324,5 +333,8 @@ Admin Projects
         }
       });
     });
+     document.querySelector('.collapse-btn').classList.add("active");
+        document.querySelector('.bi-send-fill').style.color = "white";
+        document.querySelector('.collapse-btn').style.color = "white";
   </script>
 }

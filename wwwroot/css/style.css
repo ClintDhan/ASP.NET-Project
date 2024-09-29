@@ -363,11 +363,11 @@ select,
     grid-template-columns: 32% 32% 32%;
     grid-template-rows: 20vh 20vh 20vh;
     gap: 20px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+
+    
 }
 
-.project-grid > * {
-    border: 1px solid red;
-}
 
 .to-expand {
     grid-row: span 2;
@@ -419,3 +419,11 @@ select,
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 
 }
+
+.project-grid div > label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-style: italic;
+    color: #D2DF46;
+}
+

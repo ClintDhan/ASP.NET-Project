@@ -3,13 +3,12 @@
 }
 
 @section Title {
-View Project
+    View Project
 }
 
 <div class="header-color"></div>
 <div class="card-container">
-    <div class="project-container users-container scroll-container"
-        style="max-height: 70vh; padding: 1rem; margin-top: 8vh;">
+    <div class="project-container users-container scroll-container" style="max-height: 70vh; padding: 1rem; margin-top: 5vh;">
         <div class="project-grid">
             <div>
                 <label for="">Project Name:</label> <br>
@@ -37,51 +36,56 @@ View Project
             </div>
         </div>
 
-        <!-- Tasks and Progress tables can remain unchanged -->
-
+        <!-- Tasks Table -->
         <div class="table-container">
             <div class="table-header">
                 <p>Tasks</p>
-                <button>ADD TASK</button>
+                <button>ADD TASK</button> <!-- Ensure there's a modal or functionality to add tasks -->
             </div>
             <table id="example3" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
-                        <th>No.</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Date</th>
+                        <th style="text-align: center;">#</th>
+                        <th style="text-align: center;">Task Name</th>
+                        <th style="text-align: center;">Assigned To</th>
+                        <th style="text-align: center;">Status</th>
+                        <th style="text-align: center;">Action</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach (var task in Model.Tasks)
+                {
                     <tr>
-                        <td>1</td>
-                        <td>Clint Rono</td>
-                        <td>Finished a tasked!</td>
-                        <td>9/10/2024</td>
+                        <td style="text-align: center;">@task.Id</td>
+                        <td style="text-align: center;">@task.Name</td>
+                        <td style="text-align: center;">@task.AssignedTo?.UserName</td>
+                        <td style="text-align: center;">@task.Status</td>
+                        <td style="text-align: center;">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    Action
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Edit</a></li>
+                                    <li>
+                                        <form method="post" action="/Home/DeleteTask">
+                                            <input type="hidden" name="id" value="@task.Id" />
+                                            <button type="submit" class="dropdown-item">Delete</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+
+
                     </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>Clint Rono</td>
-                        <td>Finished a tasked!</td>
-                        <td>9/10/2024</td>
-                    </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>Clint Rono</td>
-                        <td>Finished a tasked!</td>
-                        <td>9/10/2024</td>
-                    </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>Clint Rono</td>
-                        <td>Finished a tasked!</td>
-                        <td>9/10/2024</td>
-                    </tr>
+                }
                 </tbody>
             </table>
         </div>
 
+        <!-- Progress Table -->
         <div class="table-container">
             <div class="table-header">
                 <p>Progress</p>
@@ -97,36 +101,19 @@ View Project
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- Sample static data, replace with dynamic data as needed -->
                     <tr>
                         <td>1</td>
                         <td>Clint Rono</td>
-                        <td>Finished a tasked!</td>
+                        <td>Finished a task!</td>
                         <td>9/10/2024</td>
                     </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>Clint Rono</td>
-                        <td>Finished a tasked!</td>
-                        <td>9/10/2024</td>
-                    </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>Clint Rono</td>
-                        <td>Finished a tasked!</td>
-                        <td>9/10/2024</td>
-                    </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>Clint Rono</td>
-                        <td>Finished a tasked!</td>
-                        <td>9/10/2024</td>
-                    </tr>
+                    <!-- Repeat other rows as necessary -->
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-
 
 @section Scripts {
     <script>
