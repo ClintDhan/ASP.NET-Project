@@ -17,12 +17,18 @@ User Task
                 <tr>
                     <th style="width: 10vw;">Project Name</th>
                     <th>Task Name</th>
-                    <th>Assigned To</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-
+ @foreach (var task in Model)
+                    {
+                        <tr>
+                            <td>@task.ProjectName</td>
+                            <td>@task.TaskName</td>
+                            <td>@task.Status</td>
+                        </tr>
+                    }
             </tbody>
 
         </table>
@@ -30,53 +36,6 @@ User Task
 </div>
 </div>
 
-<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg custom-modal-size">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-
-                <div class="flx-row">
-                    <div class="">
-                        <label for="">Task Name:</label><br>
-                        <input type="text">
-                    </div>
-                    <div class="" style="margin-left: 1rem;">
-                        <label for="">Project Name:</label><br>
-                        <select name="cars" id="cars">
-                            <option value="volvo">Frontend Development</option>
-                            <option value="saab">Backend Development</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="flx-row">
-                    <div class="">
-                        <label for="">Assign To:</label><br>
-                        <select name="cars" id="cars">
-                            <option value="volvo">Clint</option>
-                            <option value="saab">Mekko</option>
-                        </select>
-                    </div>
-                    <div class="" style="margin-left: 1rem;">
-                        <label for="">Due Date:</label><br>
-                        <input type="date">
-                    </div>
-                </div>
-
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script>
 

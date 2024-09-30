@@ -29,9 +29,23 @@ User Projects
                     </tr>
                 </thead>
                 <tbody>
-                   
-
-
+                  @{int index = 1;}
+                    @foreach (var project in Model)
+                    {
+                        <tr>
+                            <td>@index</td>
+                            <td>@project.ProjectName</td>
+                            <td>@project.StartDate.ToString("yyyy-MM-dd")</td>
+                            <td>@project.DueDate.ToString("yyyy-MM-dd")</td>
+                            <td>@project.Status.ToString()</td>
+                            <td>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ViewModal">
+                                    View
+                                </button>
+                            </td>
+                        </tr>
+                        index++; // Increment the index for the next row
+                    }
                 </tbody>
 
             </table>

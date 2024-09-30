@@ -178,7 +178,7 @@ namespace ASP.NET_Project.Controllers
             return RedirectToAction("AdminTask"); // Adjust this to redirect to the appropriate action
         }
 
-        
+
         [HttpGet]
         public JsonResult GetProjectMembers(int projectId)
         {
@@ -343,14 +343,55 @@ namespace ASP.NET_Project.Controllers
             return View("~/Views/Home/User/UserDashboard.cshtml");
         }
 
-         public IActionResult UserProject()
+        public IActionResult UserProject()
         {
-            return View("~/Views/Home/User/UserProject.cshtml");
+            // Get the current user ID from the session
+            var userId = HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Fetch projects associated with the user
+            var projects = _context.Projects
+                .Where(p => p.Users.Any(u => u.Id == userId)) // Filter projects by users
+                .Select(p => new
+                {
+                    ProjectId = p.Id,
+                    ProjectName = p.Name,
+                    StartDate = p.StartDate,
+                    DueDate = p.EndDate,
+                    Status = p.Status
+                })
+                .ToList();
+
+            return View("~/Views/Home/User/UserProject.cshtml", projects);
         }
 
         public IActionResult UserTask()
         {
-            return View("~/Views/Home/User/UserTask.cshtml");
+            // Get the current user ID from the session
+            var userId = HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Fetch tasks associated with the user's projects
+            var tasks = _context.Tasks
+                .Include(t => t.Project) // Include the related project information
+                .Where(t => t.Project.Users.Any(u => u.Id == userId)) // Filter tasks by projects the user is a part of
+                .Select(t => new
+                {
+                    ProjectName = t.Project.Name,
+                    TaskName = t.Name,
+                    Status = t.Status
+                })
+                .ToList();
+
+            return View("~/Views/Home/User/UserTask.cshtml", tasks);
         }
 
 
