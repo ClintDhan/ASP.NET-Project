@@ -180,14 +180,14 @@ namespace ASP.NET_Project.Controllers
 
         
         [HttpGet]
-        public IActionResult GetProjectMembers(int projectId)
+        public JsonResult GetProjectMembers(int projectId)
         {
             var members = _context.Projects
                 .Where(p => p.Id == projectId)
                 .SelectMany(p => p.Users.Select(u => new { Id = u.Id, UserName = u.UserName }))
                 .ToList();
 
-            return View(members);
+            return Json(members);
         }
 
         [HttpPost]
@@ -342,6 +342,18 @@ namespace ASP.NET_Project.Controllers
         {
             return View("~/Views/Home/User/UserDashboard.cshtml");
         }
+
+         public IActionResult UserProject()
+        {
+            return View("~/Views/Home/User/UserProject.cshtml");
+        }
+
+        public IActionResult UserTask()
+        {
+            return View("~/Views/Home/User/UserTask.cshtml");
+        }
+
+
 
         public IActionResult ProjectView(int projectId)
         {

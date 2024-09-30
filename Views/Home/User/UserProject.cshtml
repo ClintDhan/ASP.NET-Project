@@ -9,10 +9,34 @@ User Projects
 <div class="header-color"></div>
 
 <!-- Button trigger modal -->
-<div class="btn-right">
-    <button type="button" class="btn btn-primary add-proj" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">
-        <i class="bi bi-plus-circle-fill"></i>Add Project
-    </button>
+<div class="card-container">
+
+
+
+
+    <div class="project-container" style="margin-top: 10.3vh;">
+
+        <div class="scroll-container">
+            <table id="example" class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th style="width: 10vw;">Project Name</th>
+                        <th>Start Date</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
 </div>
 
 <!-- Modal -->
@@ -75,69 +99,6 @@ User Projects
                 <button type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
-    </div>
-</div>
-
-
-<div class="project-container">
-    <h6>Projects</h6>
-
-    <div class="scroll-container">
-        <table id="example" class="table table-striped" style="width:100%">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th style="width: 10vw;">Project Name</th>
-                    <th>Start Date</th>
-                    <th>Due Date</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style="text-align: center;">3</td>
-                    <td>Backend Development</td>
-                    <td>2011-04-25</td>
-                    <td>2011-04-25</td>
-                    <td>On-going</td>
-                    <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                Action
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">View</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td style="text-align: center;">2</td>
-                    <td>Frontend Development</td>
-                    <td>2011-04-25</td>
-                    <td>2011-07-25</td>
-                    <td>On-going</td>
-                    <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                Action
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">View</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                    </td>
-                </tr>
-
-
-            </tbody>
-
-        </table>
     </div>
 </div>
 
