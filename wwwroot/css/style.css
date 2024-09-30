@@ -386,7 +386,7 @@ select,
     margin-top: 20px;
     width: 100%;
     height: 70vh;
-    border: 1px solid red;
+    border-top: 2px solid #A0D15B;
 }
 
 .table-header {

@@ -1,5 +1,6 @@
+
 @{
-    Layout = "~/Views/Shared/AdminLayout.cshtml";
+    Layout = (bool)ViewData["IsAdmin"] ? "~/Views/Shared/AdminLayout.cshtml" : "~/Views/Shared/UserLayout.cshtml";
 }
 
 @section Title {
@@ -40,7 +41,6 @@
         <div class="table-container">
             <div class="table-header">
                 <p>Tasks</p>
-                <button>ADD TASK</button> <!-- Ensure there's a modal or functionality to add tasks -->
             </div>
             <table id="example3" class="table table-striped" style="width:100%">
                 <thead>
@@ -54,33 +54,30 @@
                 </thead>
                 <tbody>
                     @foreach (var task in Model.Tasks)
-                {
-                    <tr>
-                        <td style="text-align: center;">@task.Id</td>
-                        <td style="text-align: center;">@task.Name</td>
-                        <td style="text-align: center;">@task.AssignedTo?.UserName</td>
-                        <td style="text-align: center;">@task.Status</td>
-                        <td style="text-align: center;">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    Action
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Edit</a></li>
-                                    <li>
-                                        <form method="post" action="/Home/DeleteTask">
-                                            <input type="hidden" name="id" value="@task.Id" />
-                                            <button type="submit" class="dropdown-item">Delete</button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-
-
-                    </tr>
-                }
+                    {
+                        <tr>
+                            <td style="text-align: center;">@task.Id</td>
+                            <td style="text-align: center;">@task.Name</td>
+                            <td style="text-align: center;">@task.AssignedTo?.UserName</td>
+                            <td style="text-align: center;">@task.Status</td>
+                            <td style="text-align: center;">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Action
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#">Edit</a></li>
+                                        <li>
+                                            <form method="post" action="/Home/DeleteTask">
+                                                <input type="hidden" name="id" value="@task.Id" />
+                                                <button type="submit" class="dropdown-item">Delete</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
@@ -101,14 +98,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Sample static data, replace with dynamic data as needed -->
-                    <tr>
-                        <td>1</td>
-                        <td>Clint Rono</td>
-                        <td>Finished a task!</td>
-                        <td>9/10/2024</td>
-                    </tr>
-                    <!-- Repeat other rows as necessary -->
+                   <!-- Progress data goes here -->
                 </tbody>
             </table>
         </div>

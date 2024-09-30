@@ -29,7 +29,7 @@ User Projects
                     </tr>
                 </thead>
                 <tbody>
-                  @{int index = 1;}
+                  @{int index = 1; }
                     @foreach (var project in Model)
                     {
                         <tr>
@@ -39,9 +39,10 @@ User Projects
                             <td>@project.DueDate.ToString("yyyy-MM-dd")</td>
                             <td>@project.Status.ToString()</td>
                             <td>
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ViewModal">
+                                <button class="btn btn-primary" ><a class="dropdown-item" href="@Url.Action("ViewProject", "Home", new { projectId = project.ProjectId })">
                                     View
-                                </button>
+                                </a></button>
+                        
                             </td>
                         </tr>
                         index++; // Increment the index for the next row

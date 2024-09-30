@@ -343,31 +343,40 @@ namespace ASP.NET_Project.Controllers
             return View("~/Views/Home/User/UserDashboard.cshtml");
         }
 
-        public IActionResult UserProject()
+       public IActionResult UserProject()
+{
+    // Get the UserId from session
+    var userId = HttpContext.Session.GetInt32("UserId");
+
+    // Check if the user is not logged in
+    if (userId == null)
+    {
+        // Log the attempt to access without being logged in
+        _logger.LogWarning("User attempted to access UserProject without being logged in.");
+        return RedirectToAction("Login");
+    }
+
+    // Fetch projects associated with the user
+    var projects = _context.Projects
+        .Where(p => p.Users.Any(u => u.Id == userId)) // Filter projects by users
+        .Select(p => new
         {
-            // Get the current user ID from the session
-            var userId = HttpContext.Session.GetInt32("UserId");
+            ProjectId = p.Id, // Change to ProjectId
+            ProjectName = p.Name,
+            StartDate = p.StartDate,
+            DueDate = p.EndDate,
+            Status = p.Status
+        })
+        .ToList();
 
-            if (userId == null)
-            {
-                return RedirectToAction("Login");
-            }
+    // Log the projects for debugging
+    _logger.LogInformation("Fetched {Count} projects for User {UserId}", projects.Count, userId);
 
-            // Fetch projects associated with the user
-            var projects = _context.Projects
-                .Where(p => p.Users.Any(u => u.Id == userId)) // Filter projects by users
-                .Select(p => new
-                {
-                    ProjectId = p.Id,
-                    ProjectName = p.Name,
-                    StartDate = p.StartDate,
-                    DueDate = p.EndDate,
-                    Status = p.Status
-                })
-                .ToList();
+    // Return the view with the fetched projects
+    return View("~/Views/Home/User/UserProject.cshtml", projects);
+}
 
-            return View("~/Views/Home/User/UserProject.cshtml", projects);
-        }
+
 
         public IActionResult UserTask()
         {
@@ -398,6 +407,8 @@ namespace ASP.NET_Project.Controllers
 
         public IActionResult ProjectView(int projectId)
         {
+            var userId = HttpContext.Session.GetInt32("UserId");
+
             // Retrieve project details along with its tasks
             var project = _context.Projects
                 .Include(p => p.ProjectManager) // Include the project manager details
@@ -427,34 +438,38 @@ namespace ASP.NET_Project.Controllers
 
         public IActionResult ViewProject(int projectId)
         {
-            // Retrieve project details from the database
-            var project = _context.Projects
-                .Include(p => p.ProjectManager)   // Include the project manager details
-                .Include(p => p.Users)
-                        .Include(p => p.Tasks) // Make sure to include tasks
-                                               // Include project members
-                .SingleOrDefault(p => p.Id == projectId);
+            
+            
+                var userId = HttpContext.Session.GetInt32("UserId");
+                var user = _context.Users.Find(userId);
+                var project = _context.Projects
+                    .Include(p => p.ProjectManager)
+                    .Include(p => p.Users)
+                    .Include(p => p.Tasks)
+                    .SingleOrDefault(p => p.Id == projectId);
 
-            if (project == null)
-            {
-                return NotFound(); // Handle case when project is not found
-            }
+                if (project == null)
+                {
+                    return NotFound();
+                }
 
-            // Create a view model to pass data to the view
-            var model = new ProjectViewModel
-            {
-                ProjectName = project.Name,
-                ProjectManager = project.ProjectManager.UserName,
-                ProjectMembers = project.Users.Select(u => u.UserName).ToList(),
-                StartDate = project.StartDate,
-                DueDate = project.EndDate,
-                Description = project.Description,
-                Tasks = project.Tasks.ToList() // Ensure this refers to your custom Task type
+                var model = new ProjectViewModel
+                {
+                    ProjectName = project.Name,
+                    ProjectManager = project.ProjectManager.UserName,
+                    ProjectMembers = project.Users.Select(u => u.UserName).ToList(),
+                    StartDate = project.StartDate,
+                    DueDate = project.EndDate,
+                    Description = project.Description,
+                    Tasks = project.Tasks.ToList()
+                };
 
-            };
+                ViewData["IsAdmin"] = user?.RoleId == 1 || user?.RoleId == 3;
 
-            return View("ProjectView", model); // Redirect to the ProjectView with the data
+                return View("ProjectView", model);
         }
+
+
         public class ProjectViewModel
         {
             public string ProjectName { get; set; }
