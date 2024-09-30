@@ -1,11 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@RenderSection("Title", required: false)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.5/css/dataTables.bootstrap5.css">
+    <link rel="stylesheet" href="https://code.jquery.com/jquery-3.7.1.js">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <!-- bootstrap css -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- diri ang icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- diri ang custom css -->
+    <link rel="stylesheet" href="~/css/style.css"> <!-- Adjust path as necessary -->
 </head>
+
 <body>
-    <h1>haha</h1>
+    <div class="flex-admin">
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-red sidebars">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <svg class="bi bi-send-fill" width="40" height="32">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+                <span class="fs-4 title">TASKFLOW</span>
+            </a>
+            <hr style="mt-5">
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li>
+                    <a href="/Home/UserDashboard" class="nav-link" id="UserDashboard">
+                        <i class="bi bi-speedometer2"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li style="width: 100%;">
+                    <a href="/Home/UserProject" class="nav-link" id="UserProject">
+                        <i class="bi bi-send-fill"></i>
+                        Projects
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/Home/UserTask" class="nav-link" id="UserTask">
+                        <i class="bi bi-grid"></i>
+                        Tasks
+                    </a>
+                </li>
+                <li>
+                    <a href="/Home/UserNotification" class="nav-link" id="UserNotification">
+                        <i class="bi bi-bell"></i>
+                        Notifications
+                    </a>
+                </li>
+            </ul>
+            <hr>
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+                    <strong class="admin-tag">User</strong>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                    <li><a class="dropdown-item" href="/Home/Login">Sign out</a></li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="to-right">
+            @RenderBody()
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.1.5/js/dataTables.bootstrap5.js"></script>
+    @RenderSection("Scripts", required: false)
+    <script src="~/js/site.js"></script>
+    <script>
+        new DataTable('#example');
+        new DataTable('#example1');
+    </script>
 </body>
+
+
+
 </html>

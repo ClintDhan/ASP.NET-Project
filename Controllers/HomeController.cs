@@ -180,14 +180,14 @@ namespace ASP.NET_Project.Controllers
 
         
         [HttpGet]
-        public JsonResult GetProjectMembers(int projectId)
+        public IActionResult GetProjectMembers(int projectId)
         {
             var members = _context.Projects
                 .Where(p => p.Id == projectId)
                 .SelectMany(p => p.Users.Select(u => new { Id = u.Id, UserName = u.UserName }))
                 .ToList();
 
-            return Json(members);
+            return View(members);
         }
 
         [HttpPost]

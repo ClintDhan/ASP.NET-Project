@@ -1,0 +1,38 @@
+@{
+    Layout = "~/Views/Shared/UserLayout.cshtml";
+}
+
+@section Title {
+User Notification
+}
+
+<div class="header-color"></div>
+
+<div class="dashboard-table-container">
+    <h2>Notifications</h2>
+
+    <table class="dashboard-table">
+        <thead>
+            <tr>
+
+                <th>Name</th>
+                <th>Message</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+
+                <td>Meow Meow</td>
+                <td>Create Navbar</td>
+                <td>9/16/2024</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById("UserNotification").classList.add("active");
+    </script>
+}
