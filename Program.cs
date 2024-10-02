@@ -8,12 +8,7 @@ builder.Services.AddControllersWithViews();
 
 // Add session services
 builder.Services.AddDistributedMemoryCache(); // Required for session
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Adjust timeout as needed
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
+builder.Services.AddSession();
 
 // Add the DbContext with SQL Server configuration
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
