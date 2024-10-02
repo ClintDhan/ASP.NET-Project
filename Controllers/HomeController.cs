@@ -1,5 +1,5 @@
 using ProjectTask = ASP.NET_Project.Models.Task; // Alias for the Task model
-
+using System;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ASP.NET_Project.Models;
@@ -24,35 +24,35 @@ namespace ASP.NET_Project.Controllers
             return View();
         }
 
-      [HttpPost]
-public IActionResult Login(string email, string password)
-{
-    // Find the user based on email and password
-    var user = _context.Users.SingleOrDefault(u => u.Email == email && u.Password == password);
-
-    // Check if the user exists and is active
-    if (user != null && user.IsActive)
-    {
-        // Store user ID in session
-        HttpContext.Session.SetInt32("UserId", user.Id);
-        
-        // Store username in session
-        HttpContext.Session.SetString("UserName", user.UserName);
-
-        // Redirect based on role
-        if (user.RoleId == 1 || user.RoleId == 3)
+        [HttpPost]
+        public IActionResult Login(string email, string password)
         {
-            return RedirectToAction("AdminDashboard");
-        }
-        else if (user.RoleId == 2)
-        {
-            return RedirectToAction("UserDashboard");
-        }
-    }
+            // Find the user based on email and password
+            var user = _context.Users.SingleOrDefault(u => u.Email == email && u.Password == password);
 
-    ViewBag.ErrorMessage = "Invalid email or password.";
-    return View();
-}
+            // Check if the user exists and is active
+            if (user != null && user.IsActive)
+            {
+                // Store user ID in session
+                HttpContext.Session.SetInt32("UserId", user.Id);
+
+                // Store username in session
+                HttpContext.Session.SetString("UserName", user.UserName);
+
+                // Redirect based on role
+                if (user.RoleId == 1 || user.RoleId == 3)
+                {
+                    return RedirectToAction("AdminDashboard");
+                }
+                else if (user.RoleId == 2)
+                {
+                    return RedirectToAction("UserDashboard");
+                }
+            }
+
+            ViewBag.ErrorMessage = "Invalid email or password.";
+            return View();
+        }
 
 
 
@@ -100,34 +100,96 @@ public IActionResult Login(string email, string password)
             return RedirectToAction("Login"); // Redirect to login after successful registration
         }
 
-        public IActionResult AdminDashboard()
-        {
-        var name = HttpContext.Session.GetString("UserName") ?? "";
-        ViewBag.Message = name;
-            return View("~/Views/Home/Admin/AdminDashboard.cshtml");
-        }
+      public IActionResult AdminDashboard()
+{
+    var name = HttpContext.Session.GetString("UserName") ?? "";
+    ViewBag.Message = name;
 
-        public IActionResult AdminProject()
-        {
-            var name = HttpContext.Session.GetString("UserName") ?? "";
-            ViewBag.Message = name;
-            var model = new AdminProjectsViewModel
-            {
-                Projects = _context.Projects.ToList(), // Get all projects from the database
-                ProjectManagers = _context.Users
-                    .Where(u => u.RoleId == 3) // Assuming RoleId 3 is for Project Managers
-                    .ToList(),
-                Users = _context.Users.ToList() // Get all users for the members dropdown
-            };
+    // Get the current user ID from session
+    int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
 
-            var users = _context.Users
-     .Where(u => u.RoleId == 2)
-     .ToList();
+    // Fetch the user including their role and associated projects
+    var user = _context.Users
+        .Include(u => u.Role)
+        .Include(u => u.Projects) // Include associated projects
+        .FirstOrDefault(u => u.Id == userId);
 
-            ViewBag.Users = users;
+    if (user == null)
+    {
+        return NotFound(); // Handle user not found
+    }
 
-            return View("~/Views/Home/Admin/AdminProject.cshtml", model);
-        }
+    IEnumerable<Project> projects;
+
+    // Determine which projects to show based on the user's role
+    if (user.RoleId == 1) // Admin role
+    {
+        projects = _context.Projects.ToList(); // Fetch all projects
+    }
+    else if (user.RoleId == 3) // Regular user role
+    {
+        projects = user.Projects; // Fetch only the user's projects
+    }
+    else
+    {
+        projects = Enumerable.Empty<Project>(); // No projects if role is neither
+    }
+
+    // Calculate counts for the view
+    ViewBag.CompletedCount = projects.Count(p => p.Status == ProjectStatus.Completed);
+    ViewBag.InProgressCount = projects.Count(p => p.Status == ProjectStatus.InProgress);
+    ViewBag.OverdueCount = projects.Count(p => p.Status == ProjectStatus.Overdue && p.EndDate < DateTime.Now);
+
+    return View("~/Views/Home/Admin/AdminDashboard.cshtml");
+}
+
+
+
+       public IActionResult AdminProject()
+{
+    var name = HttpContext.Session.GetString("UserName") ?? "";
+    ViewBag.Message = name;
+
+    // Get the current user ID from session
+    int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+
+    // Fetch the user including their role
+    var user = _context.Users
+        .Include(u => u.Role) // Include Role if necessary
+        .FirstOrDefault(u => u.Id == userId);
+
+    if (user == null)
+    {
+        return NotFound(); // Handle user not found
+    }
+
+    // Create the view model
+    var model = new AdminProjectsViewModel
+    {
+        // Get projects based on the user's role
+        Projects = user.RoleId == 1 
+            ? _context.Projects.ToList() // All projects for admin
+            : _context.Projects
+                .Where(p => p.ProjectManagerId == userId) // Only user's projects for project managers
+                .ToList(),
+                
+        ProjectManagers = _context.Users
+            .Where(u => u.RoleId == 3) // Assuming RoleId 3 is for Project Managers
+            .ToList(),
+        Users = _context.Users.ToList() // Get all users for the members dropdown
+    };
+
+    // Fetch users with RoleId 2
+    var users = _context.Users
+        .Where(u => u.RoleId == 2)
+        .ToList();
+
+    ViewBag.Users = users;
+
+    return View("~/Views/Home/Admin/AdminProject.cshtml", model);
+}
+
+
 
         [HttpPost]
         public IActionResult CreateProject(string projectName, int projectManagerId, List<int> members, DateTime dueDate, string description)
@@ -147,7 +209,7 @@ public IActionResult Login(string email, string password)
                 StartDate = DateTime.Now,
                 EndDate = dueDate,
                 Description = description,
-                Status = ProjectStatus.Pending,
+                Status = ProjectStatus.InProgress,
                 ProjectManagerId = projectManagerId,
                 CreatedById = userId.Value // Assign the current user as the creator
             };
@@ -171,6 +233,23 @@ public IActionResult Login(string email, string password)
             return RedirectToAction("AdminProject");
         }
 
+        [HttpGet]
+        public IActionResult DownloadFile(int id)
+        {
+            // Retrieve the progress entry by its ID
+            var progress = _context.Progresses.SingleOrDefault(p => p.Id == id);
+
+            // Check if the progress entry and file exist
+            if (progress == null || progress.FileData == null || string.IsNullOrEmpty(progress.FileName))
+            {
+                return NotFound(); // Return 404 if file not found
+            }
+
+            // Return the file for download
+            return File(progress.FileData, progress.ContentType, progress.FileName);
+        }
+
+
 
 
 
@@ -192,15 +271,16 @@ public IActionResult Login(string email, string password)
 
 
         [HttpGet]
-        public JsonResult GetProjectMembers(int projectId)
-        {
-            var members = _context.Projects
-                .Where(p => p.Id == projectId)
-                .SelectMany(p => p.Users.Select(u => new { Id = u.Id, UserName = u.UserName }))
-                .ToList();
+public JsonResult GetProjectMembers(int projectId)
+{
+    var members = _context.Projects
+        .Where(p => p.Id == projectId)
+        .SelectMany(p => p.Users.Select(u => new { Id = u.Id, UserName = u.UserName }))
+        .ToList();
 
-            return Json(members);
-        }
+    return Json(members);
+}
+
 
         [HttpPost]
         public IActionResult EditProject(int projectId, string projectName, int projectManagerId, List<int> members, DateTime startDate, DateTime endDate, string description, ProjectStatus status, bool isActive)
@@ -241,7 +321,6 @@ public IActionResult Login(string email, string password)
                 };
 
                 return View(viewModel);
-
             }
 
             // Update the project details
@@ -250,7 +329,7 @@ public IActionResult Login(string email, string password)
             project.StartDate = startDate;
             project.EndDate = endDate;
             project.Description = description;
-            project.Status = status;
+            project.Status = status; // Directly assign the status
             project.IsActive = isActive;
 
             // Update project members
@@ -266,14 +345,6 @@ public IActionResult Login(string email, string password)
 
             return RedirectToAction("AdminProject");
         }
-
-
-
-
-
-
-
-
 
         public IActionResult AdminTask()
         {
@@ -304,7 +375,7 @@ public IActionResult Login(string email, string password)
                 Description = description,
                 ProjectId = projectId,
                 AssignedToId = assignedToId,
-                Status = TaskStatus.Pending
+                Status = TaskStatus.InProgress
             };
 
             _context.Tasks.Add(task);
@@ -314,19 +385,53 @@ public IActionResult Login(string email, string password)
             return RedirectToAction("AdminTask");
         }
 
-
-
-
-        public IActionResult AdminUser()
+        [HttpPost]
+    public IActionResult EditTask(int projectId, int taskId, string taskName, int assignedToId, string description)
+    {
+        // Fetch the task from the database
+        var task = _context.Tasks.Include(t => t.AssignedTo).FirstOrDefault(t => t.Id == taskId);
+        
+        if (task != null)
         {
-            var name = HttpContext.Session.GetString("UserName") ?? "";
-            ViewBag.Message = name;
-            // Fetch all users from the database
-            var users = _context.Users.Include(u => u.Role).ToList();  // Assuming Role is a navigation property
-
-            // Pass the list of users to the view
-            return View("~/Views/Home/Admin/AdminUser.cshtml", users);
+            // Update task properties
+            task.Name = taskName;
+            task.AssignedToId = assignedToId;
+            task.Description = description;
+            
+            _context.SaveChanges();
         }
+        
+        return RedirectToAction("AdminTask"); // Adjust the redirect as necessary
+    }
+
+
+
+
+      public IActionResult AdminUser()
+{
+    var name = HttpContext.Session.GetString("UserName") ?? "";
+    ViewBag.Message = name;
+
+    // Get the current user ID from the session
+    int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+
+    // Fetch the user from the database
+    var user = _context.Users.Include(u => u.Role).FirstOrDefault(u => u.Id == userId);
+
+    // Check if the user is found and if they have RoleId 3
+    if (user == null || user.RoleId == 3)
+    {
+        // Redirect to an access denied page
+        return RedirectToAction("AccessDenied", "Home"); // Adjust the controller name as needed
+    }
+
+    // Fetch all users from the database
+    var users = _context.Users.Include(u => u.Role).ToList();  // Assuming Role is a navigation property
+
+    // Pass the list of users to the view
+    return View("~/Views/Home/Admin/AdminUser.cshtml", users);
+}
+
 
         [HttpPost]
         public IActionResult UpdateUser(User user)
@@ -349,19 +454,56 @@ public IActionResult Login(string email, string password)
             return RedirectToAction("AdminUser");
         }
 
-        public IActionResult AdminCompleted()
-        {
-            var name = HttpContext.Session.GetString("UserName") ?? "";
-            ViewBag.Message = name;
-            return View("~/Views/Home/Admin/AdminCompleted.cshtml");
-        }
+      public IActionResult AdminCompleted()
+{
+    var name = HttpContext.Session.GetString("UserName") ?? "";
+    ViewBag.Message = name;
 
-        public IActionResult UserDashboard()
-        {
-            var name = HttpContext.Session.GetString("UserName") ?? "";
-            ViewBag.Message = name;
-            return View("~/Views/Home/User/UserDashboard.cshtml");
-        }
+    var model = new AdminCompletedProjectsViewModel
+    {
+        // Get only projects with a status of Completed
+        Projects = _context.Projects
+            .Where(p => p.Status == ProjectStatus.Completed)
+            .ToList()
+    };
+
+    return View("~/Views/Home/Admin/AdminCompleted.cshtml", model);
+}
+
+
+
+       public IActionResult UserDashboard()
+{
+    var name = HttpContext.Session.GetString("UserName") ?? "";
+    ViewBag.Message = name;
+
+    // Get the current user's ID from the session
+    int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+
+    // Fetch the user's projects based on their role
+    var ongoingProjects = _context.Projects
+        .Where(p => p.Users.Any(u => u.Id == userId) && p.Status == ProjectStatus.InProgress)
+        .ToList();
+
+    var completedProjects = _context.Projects
+        .Where(p => p.Users.Any(u => u.Id == userId) && p.Status == ProjectStatus.Completed)
+        .ToList();
+
+    var overdueProjects = _context.Projects
+        .Where(p => p.Users.Any(u => u.Id == userId) && p.Status == ProjectStatus.Overdue)
+        .ToList();
+
+    var model = new UserDashboardViewModel
+    {
+        OngoingProjects = ongoingProjects,
+        CompletedProjects = completedProjects,
+        OverdueProjects = overdueProjects
+    };
+
+    return View("~/Views/Home/User/UserDashboard.cshtml", model);
+}
+
+
 
         public IActionResult UserProject()
         {
@@ -433,7 +575,7 @@ public IActionResult Login(string email, string password)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             var name = HttpContext.Session.GetString("UserName") ?? "";
-        ViewBag.Message = name;
+            ViewBag.Message = name;
             // Retrieve project details along with its tasks
             var project = _context.Projects
                 .Include(p => p.ProjectManager) // Include the project manager details
@@ -461,56 +603,56 @@ public IActionResult Login(string email, string password)
             return View("~/Views/Home/ProjectView.cshtml", model); // Redirect to the ProjectView with the data
         }
 
-[HttpPost]
-public IActionResult CreateProgress(Progress model, IFormFile progressFile)
-{
-    // Ensure that the UserId is set from the session
-    var userId = HttpContext.Session.GetInt32("UserId");
-
-    // Check if UserId is null
-    if (userId == null)
-    {
-        ModelState.AddModelError("UserId", "User must be assigned.");
-        return View(model); // Return to the view with an error
-    }
-
-    // Create a new Progress object
-    var progress = new Progress
-    {
-        Description = model.Description,
-        Date = model.Date,
-        TaskId = model.TaskId,
-        UserId = userId.Value // Make sure to set the UserId
-    };
-
-    // Handle file upload if a file is provided
-    if (progressFile != null && progressFile.Length > 0)
-    {
-        using (var stream = new MemoryStream())
+        [HttpPost]
+        public IActionResult CreateProgress(Progress model, IFormFile progressFile)
         {
-            // Copy the file data to memory
-            progressFile.CopyTo(stream);
-            progress.FileData = stream.ToArray();
-            progress.FileName = Path.GetFileName(progressFile.FileName);
-            progress.ContentType = progressFile.ContentType;
+            // Ensure that the UserId is set from the session
+            var userId = HttpContext.Session.GetInt32("UserId");
+
+            // Check if UserId is null
+            if (userId == null)
+            {
+                ModelState.AddModelError("UserId", "User must be assigned.");
+                return View(model); // Return to the view with an error
+            }
+
+            // Create a new Progress object
+            var progress = new Progress
+            {
+                Description = model.Description,
+                Date = model.Date,
+                TaskId = model.TaskId,
+                UserId = userId.Value // Make sure to set the UserId
+            };
+
+            // Handle file upload if a file is provided
+            if (progressFile != null && progressFile.Length > 0)
+            {
+                using (var stream = new MemoryStream())
+                {
+                    // Copy the file data to memory
+                    progressFile.CopyTo(stream);
+                    progress.FileData = stream.ToArray();
+                    progress.FileName = Path.GetFileName(progressFile.FileName);
+                    progress.ContentType = progressFile.ContentType;
+                }
+            }
+
+            // Add the new Progress entry to the context
+            _context.Progresses.Add(progress);
+
+            // Save changes to the database
+            _context.SaveChanges();
+
+            // Get the ProjectId from the Task associated with the Progress
+            var projectId = _context.Tasks
+                .Where(t => t.Id == progress.TaskId)
+                .Select(t => t.ProjectId)
+                .FirstOrDefault(); // This gets the ProjectId associated with the Task
+
+            // Redirect to the ProjectView after successful operation, passing the ProjectId as a query parameter
+            return RedirectToAction("ViewProject", new { projectId });
         }
-    }
-
-    // Add the new Progress entry to the context
-    _context.Progresses.Add(progress);
-    
-    // Save changes to the database
-    _context.SaveChanges();
-
-    // Get the ProjectId from the Task associated with the Progress
-    var projectId = _context.Tasks
-        .Where(t => t.Id == progress.TaskId)
-        .Select(t => t.ProjectId)
-        .FirstOrDefault(); // This gets the ProjectId associated with the Task
-
-    // Redirect to the ProjectView after successful operation, passing the ProjectId as a query parameter
-    return RedirectToAction("ViewProject", new { projectId });
-}
 
 
 
@@ -533,15 +675,17 @@ public IActionResult CreateProgress(Progress model, IFormFile progressFile)
 
         public IActionResult ViewProject(int projectId)
         {
-            
             var name = HttpContext.Session.GetString("UserName") ?? "";
             ViewBag.Message = name;
             var userId = HttpContext.Session.GetInt32("UserId");
             var user = _context.Users.Find(userId);
+
+            // Retrieve project with its tasks and progress data
             var project = _context.Projects
                 .Include(p => p.ProjectManager)
                 .Include(p => p.Users)
                 .Include(p => p.Tasks)
+                .ThenInclude(t => t.Progresses) // Include Progresses for each Task
                 .SingleOrDefault(p => p.Id == projectId);
 
             if (project == null)
@@ -557,14 +701,15 @@ public IActionResult CreateProgress(Progress model, IFormFile progressFile)
                 StartDate = project.StartDate,
                 DueDate = project.EndDate,
                 Description = project.Description,
-                Tasks = project.Tasks.ToList(), // Ensure this property exists in your ViewModel
-
+                Tasks = project.Tasks.ToList(),
+                Progresses = project.Tasks.SelectMany(t => t.Progresses).ToList() // Collect all progress data
             };
 
             ViewData["IsAdmin"] = user?.RoleId == 1 || user?.RoleId == 3;
 
             return View("ProjectView", model);
         }
+
 
 
         public class ProjectViewModel
@@ -578,10 +723,24 @@ public IActionResult CreateProgress(Progress model, IFormFile progressFile)
             public DateTime DueDate { get; set; }
             public string Description { get; set; }
             public bool IsActive { get; set; } // Add this to the ProjectViewModel
-    public List<Progress> Progresses { get; set; } // Ensure this property exists
-
+            public List<Progress> Progresses { get; set; } // Include progress data
 
             public List<ASP.NET_Project.Models.Task> Tasks { get; set; } = new List<ASP.NET_Project.Models.Task>(); // Specify the full namespace
+        }
+
+        public class TaskProgressViewModel
+        {
+            public string TaskName { get; set; }
+            public TaskStatus Status { get; set; }
+            public List<ProgressViewModel> ProgressList { get; set; }
+        }
+
+        public class ProgressViewModel
+        {
+            public string Description { get; set; }
+            public string UserName { get; set; }
+            public DateTime Date { get; set; }
+            public string FileName { get; set; }
         }
 
 
@@ -593,6 +752,18 @@ public IActionResult CreateProgress(Progress model, IFormFile progressFile)
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+    }
+
+    internal class UserDashboardViewModel
+    {
+        public List<Project> OngoingProjects { get; set; }
+        public List<Project> CompletedProjects { get; set; }
+        public List<Project> OverdueProjects { get; set; }
+    }
+
+    internal class AdminCompletedProjectsViewModel
+    {
+        public List<Project> Projects { get; set; }
     }
 
     internal class EditProjectViewModel

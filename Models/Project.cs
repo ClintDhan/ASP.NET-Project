@@ -4,9 +4,9 @@
     {
         public enum ProjectStatus
         {
-            Pending,
             InProgress,
-            Completed
+            Completed,
+            Overdue
         }
 
     

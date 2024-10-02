@@ -8,61 +8,62 @@ Admin Dashboard
 
 <div class="header-color"></div>
 
-    <div class="dashboard-portion">
+<div class="dashboard-portion">
 
-        <div class="dashboard-portion-flex completed-projects">
-            <div>
-                <div class="green"><i class="bi bi-check-circle-fill"></i></div>
-            </div>
-            <div>
-                <p class="portion-count">5</p>
-                <p class="portion-title">Completed Projects</p>
-            </div>
+    <div class="dashboard-portion-flex completed-projects">
+        <div>
+            <div class="green"><i class="bi bi-check-circle-fill"></i></div>
         </div>
-
-        <div class="dashboard-portion-flex on-going-projects">
-            <div>
-                <div class="blue"><i class="bi bi-arrow-repeat"></i></div>
-            </div>
-            <div>
-                <p class="portion-count">4</p>
-                <p class="portion-title">On-going Projects</p>
-            </div>
-        </div>
-
-        <div class="dashboard-portion-flex overdue-projects">
-            <div>
-                <div class="red"><i class="bi bi-exclamation-diamond-fill"></i></div>
-            </div>
-            <div>
-                <p class="portion-count">2</p>
-                <p class="portion-title">Overdue Projects</p>
-            </div>
+        <div>
+            <p class="portion-count">@ViewBag.CompletedCount</p> <!-- Updated count -->
+            <p class="portion-title">Completed Projects</p>
         </div>
     </div>
 
-    <div class="dashboard-table-container">
-        <h2>History</h2>
-        
-        <table class="dashboard-table">
-            <thead>
-                <tr>
-                <th>No.</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Clint Rono</td>
-                    <td>Finished a tasked!</td>
-                    <td>9/10/2024</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="dashboard-portion-flex on-going-projects">
+        <div>
+            <div class="blue"><i class="bi bi-arrow-repeat"></i></div>
+        </div>
+        <div>
+            <p class="portion-count">@ViewBag.InProgressCount</p> <!-- Updated count -->
+            <p class="portion-title">On-going Projects</p>
+        </div>
     </div>
+
+    <div class="dashboard-portion-flex overdue-projects">
+        <div>
+            <div class="red"><i class="bi bi-exclamation-diamond-fill"></i></div>
+        </div>
+        <div>
+            <p class="portion-count">@ViewBag.OverdueCount</p> <!-- Updated count -->
+            <p class="portion-title">Overdue Projects</p>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-table-container">
+    <h2>History</h2>
+    
+    <table class="dashboard-table">
+        <thead>
+            <tr>
+            <th>No.</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- You can loop through the projects here if needed -->
+            <tr>
+                <td>1</td>
+                <td>Clint Rono</td>
+                <td>Finished a tasked!</td>
+                <td>9/10/2024</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
 @section Scripts {
   <script>

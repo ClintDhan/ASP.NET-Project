@@ -1,154 +1,57 @@
+
 @{
     Layout = "~/Views/Shared/AdminLayout.cshtml";
 }
 
 @section Title {
-Admin Completed Projects
+    Admin Completed Projects
 }
 
 <div class="header-color"></div>
 
-<!-- Modal -->
-<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog modal-lg custom-modal-size">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-
-        <div class="flx-row">
-          <div class="">
-            <label for="">Project Name:</label><br>
-            <input type="text">
-          </div>
-          <div class="" style="margin-left: 1rem;">
-            <label for="">Project Name:</label><br>
-            <input type="text">
-          </div>
-        </div>
-
-        <div class="flx-row">
-          <div class="">
-            <label for="">Start Date:</label><br>
-            <input type="date">
-          </div>
-          <div class="" style="margin-left: 1rem;">
-            <label for="">Due Date:</label><br>
-            <input type="date">
-          </div>
-        </div>
-
-        <div class="flx-row">
-          <div>
-            <label for="">Members:</label> <br>
-            <select name="cars" id="cars" multiple>
-              <option value="volvo">Clint</option>
-              <option value="saab">Mekko</option>
-              <option value="opel">Jonathan</option>
-              <option value="audi">MeowMeow</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="flx-row">
-          <div>
-            <label for="exampleFormControlTextarea1">Description:</label><br>
-            <textarea class="form-control text-area-desc" id="exampleFormControlTextarea1" rows="3"></textarea>
-          </div>
-        </div>
-
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
 <div class="project-container">
-  <div class="scroll-container users-container">
-    <table id="example" class="table table-striped" style="width:100%">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th style="width: 10vw;">Project Name</th>
-          <th>Start Date</th>
-          <th>Due Date</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="text-align: center;">1</td>
-          <td>System Architect</td>
-          <td>2011-04-25</td>
-          <td>2011-04-25</td>
-          <td>Completed</td>
-          <td>
-            <div class="btn-group">
-              <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                Action
-              </button>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">View</a></li>
-              </ul>
-            </div>
-          </td>
-        </tr>
-
-        <tr>
-          <td style="text-align: center;">2</td>
-          <td>Accountant</td>
-          <td>2011-04-25</td>
-          <td>2011-07-25</td>
-          <td>Completed</td>
-          <td><div class="btn-group">
-              <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                Action
-              </button>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">View</a></li>
-              </ul>
-            </div>
-          </td></td>
-        </tr>
-        <tr>
-          <td style="text-align: center;">3</td>
-          <td>Junior Technical Author</td>
-          <td>2011-04-25</td>
-          <td>2011-07-25</td>
-          <td>Completed</td>
-          <td><div class="btn-group">
-              <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                Action
-              </button>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">View</a></li>
-              </ul>
-            </div>
-          </td></td>
-        </tr>
-
-      </tbody>
-
-    </table>
-  </div>
+    <div class="scroll-container users-container">
+        <table id="example" class="table table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th style="width: 10vw;">Project Name</th>
+                    <th>Start Date</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                 @foreach (var project in Model.Projects)
+                {
+                    <tr>
+                        <td style="text-align: center;">@project.Id</td>
+                        <td>@project.Name</td>
+                        <td>@project.StartDate.ToString("yyyy-MM-dd")</td>
+                        <td>@project.EndDate.ToString("yyyy-MM-dd")</td>
+                        <td>@project.Status</td>
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Action
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="@Url.Action("ViewProject", "Home", new { projectId = project.Id })">View</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
 
 @section Scripts {
-  <script>
-    document.querySelector('.collapse-btn').classList.add("active");
-    document.querySelector('.bi-send-fill').style.color = "white";
-    document.querySelector('.collapse-btn').style.color = "white";
-  </script>
+    <script>
+        document.querySelector('.collapse-btn').classList.add("active");
+        document.querySelector('.bi-send-fill').style.color = "white";
+        document.querySelector('.collapse-btn').style.color = "white";
+    </script>
 }

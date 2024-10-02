@@ -14,49 +14,48 @@ Admin Task
     </button>
 </div>
 <div class="project-container">
-    <div class="scroll-container">
-        <table id="example1" class="table table-striped" style="width:100%">
-            <thead>
+   <div class="scroll-container">
+    <table id="example1" class="table table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th style="width: 10vw;">Project Name</th>
+                <th>Task Name</th>
+                <th>Assigned To</th>
+                <th>Description</th> <!-- New Description Column -->
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var task in Model.Tasks)
+            {
                 <tr>
-                    <th style="width: 10vw;">Project Name</th>
-                    <th>Task Name</th>
-                    <th>Assigned To</th>
-                    <th>Status</th>
-                    <th>Action</th>
+                    <td data-project-id="@task.Project.Id">@task.Project.Name</td>
+                    <td>@task.Name</td>
+                    <td>@task.AssignedTo?.UserName</td>
+                    <td>@task.Description</td> <!-- Displaying the Description -->
+                    <td>@task.Status</td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Action
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editTaskModal">Edit</a></li>
+                                <li>
+                                    <input type="hidden" name="id" value="@task.Id" />
+                                    <button type="submit" class="dropdown-item">Delete</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (var task in Model.Tasks)
-                {
-                    <tr>
-                        <td>@task.Project.Name</td>
-                        <td>@task.Name</td>
-                        <td>@task.AssignedTo?.UserName</td>
-                        <td>@task.Status</td>
-                        <td>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    Action
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Edit</a></li>
-                                    <li>
-                                        <form method="post" action="/Home/DeleteTask">
-                                            <input type="hidden" name="id" value="@task.Id" />
-                                            <button type="submit" class="dropdown-item">Delete</button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
+            }
+        </tbody>
+    </table>
+</div>
 
-
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
 </div>
 </div>
 
@@ -111,31 +110,121 @@ Admin Task
 </div>
 
 
+<!--Edit Modal-->
+<div class="modal fade" id="editTaskModal" tabindex="-1" role="dialog" aria-labelledby="editTaskLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg custom-modal-size">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editTaskLabel">Edit Task</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="editTaskForm" method="post" action="/Home/EditTask">
+        <div class="modal-body">
+          <input type="hidden" id="editTaskId" name="taskId" />
+          <input type="hidden" id="editProjectId" name="projectId" />
+          <div class="flx-row">
+            <div>
+              <label for="editTaskName">Task Name:</label><br>
+              <input type="text" id="editTaskName" name="taskName" required />
+            </div>
+            <div style="margin-left: 1rem;">
+              <label for="editAssignedToId">Assign To:</label><br>
+              <select id="editAssignedToId" name="assignedToId" required>
+                <option value="">Select Member</option>
+              </select>
+            </div>
+          </div>
+          <div class="flx-row">
+            <div>
+              <label for="editDescription">Description:</label><br>
+              <textarea class="form-control text-area-desc" id="editDescription" name="description" rows="3" required></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-    $(document).ready(function () {
-        // When the project is selected
-        $('#projectId').on('change', function () {
-            var projectId = $(this).val();
-            
-            if (projectId) {
-                // Make an AJAX call to get members for the selected project
-                $.getJSON('/Home/GetProjectMembers', { projectId: projectId }, function (data) {
-                    // Clear the "Assigned To" dropdown
-                    $('#assignedToId').empty();
-                    $('#assignedToId').append('<option value="">Select Member</option>');
-                    
-                    // Populate the dropdown with the fetched members
-                    $.each(data, function (i, member) {
-                        $('#assignedToId').append('<option value="' + member.id + '">' + member.userName + '</option>');
-                    });
-                });
-            } else {
-                // If no project is selected, clear the "Assigned To" dropdown
+  $(document).ready(function () {
+    // When the project is selected in the Add Task modal
+    $('#projectId').on('change', function () {
+        var projectId = $(this).val();
+        
+        if (projectId) {
+            // Make an AJAX call to get members for the selected project
+            $.getJSON('/Home/GetProjectMembers', { projectId: projectId }, function (data) {
+                // Clear the "Assigned To" dropdown
                 $('#assignedToId').empty();
                 $('#assignedToId').append('<option value="">Select Member</option>');
-            }
-        });
+                
+                // Populate the dropdown with the fetched members
+                $.each(data, function (i, member) {
+                    $('#assignedToId').append('<option value="' + member.id + '">' + member.userName + '</option>');
+                });
+            });
+        } else {
+            // If no project is selected, clear the "Assigned To" dropdown
+            $('#assignedToId').empty();
+            $('#assignedToId').append('<option value="">Select Member</option>');
+        }
     });
+
+    // Handle click event for editing a task
+    $(document).on('click', '.dropdown-item', function () {
+        // Get the task details from the clicked row
+        var taskRow = $(this).closest('tr');
+        var taskId = taskRow.find('input[name="id"]').val(); // Assuming the hidden input is present
+        var taskName = taskRow.find('td:eq(1)').text();
+        var assignedToId = taskRow.find('td:eq(2)').data('assigned-to-id'); // Store assigned user ID in the table cell
+        var projectId = taskRow.find('td:eq(0)').data('project-id'); // Store project ID in the table cell
+        var description = taskRow.find('td:eq(3)').text(); // Assuming the description is in the fourth column
+
+        // Populate the modal fields
+        $('#editTaskId').val(taskId);
+        $('#editTaskName').val(taskName);
+        $('#editProjectId').val(projectId);
+
+        // Fetch project members based on the selected project
+        if (projectId) {
+            console.log("Fetching members for project ID:", projectId); // Debugging line
+            $.getJSON('/Home/GetProjectMembers', { projectId: projectId }, function (data) {
+                console.log("Members fetched:", data); // Debugging line
+
+                // Clear the "Assign To" dropdown
+                $('#editAssignedToId').empty();
+                $('#editAssignedToId').append('<option value="">Select Member</option>');
+
+                // Populate the dropdown with the fetched members
+                $.each(data, function (i, member) {
+                    $('#editAssignedToId').append('<option value="' + member.id + '">' + member.userName + '</option>');
+                });
+
+                // Set the selected member if applicable
+                $('#editAssignedToId').val(assignedToId);
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.error("Error fetching members:", textStatus, errorThrown); // Debugging line
+            });
+        } else {
+            $('#editAssignedToId').empty();
+            $('#editAssignedToId').append('<option value="">Select Member</option>');
+        }
+
+        // Set the description in the modal
+        $('#editDescription').val(description); // Set the existing description in the textarea
+    });
+});
+
 </script>
+
 

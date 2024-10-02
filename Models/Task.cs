@@ -12,11 +12,14 @@ public class Task
     public virtual Project Project { get; set; }
     public virtual User AssignedTo { get; set; }
 
+    public virtual ICollection<Progress> Progresses { get; set; } = new List<Progress>();
+
+
 }
 
 public enum TaskStatus 
 {
-    Pending,
     InProgress,
-    Completed
+    Completed,
+    Overdue
 }
