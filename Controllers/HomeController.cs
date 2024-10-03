@@ -24,40 +24,45 @@ namespace ASP.NET_Project.Controllers
             return View();
         }
 
-        [HttpPost]
-        public IActionResult Login(string email, string password)
+       [HttpPost]
+public IActionResult Login(string email, string password)
+{
+    // Find the user based on email and password
+    var user = _context.Users.SingleOrDefault(u => u.Email == email && u.Password == password);
+
+    // Check if the user exists
+    if (user != null)
+    {
+        // Check if the user is active
+        if (!user.IsActive)
         {
-            // Find the user based on email and password
-            var user = _context.Users.SingleOrDefault(u => u.Email == email && u.Password == password);
-
-            // Check if the user exists and is active
-            if (user != null && user.IsActive)
-            {
-                // Store user ID in session
-                HttpContext.Session.SetInt32("UserId", user.Id);
-
-                // Store username in session
-                HttpContext.Session.SetString("UserName", user.UserName);
-                HttpContext.Session.SetInt32("RoleId", user.RoleId); // Assuming RoleId is an integer
-                int roleId = HttpContext.Session.GetInt32("RoleId") ?? 0;
-                ViewBag.roleId = roleId;
-
-
-
-                // Redirect based on role
-                if (user.RoleId == 1 || user.RoleId == 3)
-                {
-                    return RedirectToAction("AdminDashboard");
-                }
-                else if (user.RoleId == 2)
-                {
-                    return RedirectToAction("UserDashboard");
-                }
-            }
-
-            ViewBag.ErrorMessage = "Invalid email or password.";
+            // Redirect to the login view with an error message
+            ViewBag.ErrorMessage = "Your account is Inactive. Contact an Admin to change Account Status.";
             return View();
         }
+
+        // Proceed if the user is active
+        HttpContext.Session.SetInt32("UserId", user.Id);
+        HttpContext.Session.SetString("UserName", user.UserName);
+        HttpContext.Session.SetInt32("RoleId", user.RoleId); // Assuming RoleId is an integer
+        int roleId = HttpContext.Session.GetInt32("RoleId") ?? 0;
+        ViewBag.roleId = roleId;
+
+        // Redirect based on role
+        if (user.RoleId == 1 || user.RoleId == 3)
+        {
+            return RedirectToAction("AdminDashboard");
+        }
+        else if (user.RoleId == 2)
+        {
+            return RedirectToAction("UserDashboard");
+        }
+    }
+
+    ViewBag.ErrorMessage = "Invalid email or password.";
+    return View();
+}
+
 
 
 
@@ -106,50 +111,50 @@ namespace ASP.NET_Project.Controllers
         }
 
         public IActionResult AdminDashboard()
-{
-    var name = HttpContext.Session.GetString("UserName") ?? "";
-    ViewBag.Message = name;
+        {
+            var name = HttpContext.Session.GetString("UserName") ?? "";
+            ViewBag.Message = name;
 
-    // Get the current user ID from session
-    int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            // Get the current user ID from session
+            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
 
-    // Fetch the user including their role and associated projects
-    var user = _context.Users
-        .Include(u => u.Role)
-        .Include(u => u.Projects) // Include associated projects
-        .FirstOrDefault(u => u.Id == userId);
+            // Fetch the user including their role and associated projects
+            var user = _context.Users
+                .Include(u => u.Role)
+                .Include(u => u.Projects) // Include associated projects
+                .FirstOrDefault(u => u.Id == userId);
 
-    if (user == null)
-    {
-        return NotFound(); // Handle user not found
-    }
+            if (user == null)
+            {
+                return NotFound(); // Handle user not found
+            }
 
-    IEnumerable<Project> ongoingProjects;
-    IEnumerable<Project> completedProjects;
-    IEnumerable<Project> overdueProjects;
+            IEnumerable<Project> ongoingProjects;
+            IEnumerable<Project> completedProjects;
+            IEnumerable<Project> overdueProjects;
 
-    // Determine which projects to show based on the user's role
-    if (user.RoleId == 1) // Admin role
-    {
-        // Fetch all projects for admin
-        ongoingProjects = _context.Projects.Where(p => p.Status == ProjectStatus.InProgress).ToList();
-        completedProjects = _context.Projects.Where(p => p.Status == ProjectStatus.Completed).ToList();
-        overdueProjects = _context.Projects.Where(p => p.Status == ProjectStatus.Overdue && p.EndDate < DateTime.Now).ToList();
-    }
-    else // For RoleId == 2 or 3 or any other role
-    {
-        ongoingProjects = _context.Projects.Where(p => p.ProjectManagerId == userId && p.Status == ProjectStatus.InProgress).ToList();
-        completedProjects = _context.Projects.Where(p => p.ProjectManagerId == userId && p.Status == ProjectStatus.Completed).ToList();
-        overdueProjects = _context.Projects.Where(p => p.ProjectManagerId == userId && p.Status == ProjectStatus.Overdue && p.EndDate < DateTime.Now).ToList();
-    }
+            // Determine which projects to show based on the user's role
+            if (user.RoleId == 1) // Admin role
+            {
+                // Fetch all projects for admin
+                ongoingProjects = _context.Projects.Where(p => p.Status == ProjectStatus.InProgress).ToList();
+                completedProjects = _context.Projects.Where(p => p.Status == ProjectStatus.Completed).ToList();
+                overdueProjects = _context.Projects.Where(p => p.Status == ProjectStatus.Overdue && p.EndDate < DateTime.Now).ToList();
+            }
+            else // For RoleId == 2 or 3 or any other role
+            {
+                ongoingProjects = _context.Projects.Where(p => p.ProjectManagerId == userId && p.Status == ProjectStatus.InProgress).ToList();
+                completedProjects = _context.Projects.Where(p => p.ProjectManagerId == userId && p.Status == ProjectStatus.Completed).ToList();
+                overdueProjects = _context.Projects.Where(p => p.ProjectManagerId == userId && p.Status == ProjectStatus.Overdue && p.EndDate < DateTime.Now).ToList();
+            }
 
-    // Calculate counts for the view
-    ViewBag.CompletedCount = completedProjects.Count();
-    ViewBag.InProgressCount = ongoingProjects.Count();
-    ViewBag.OverdueCount = overdueProjects.Count();
+            // Calculate counts for the view
+            ViewBag.CompletedCount = completedProjects.Count();
+            ViewBag.InProgressCount = ongoingProjects.Count();
+            ViewBag.OverdueCount = overdueProjects.Count();
 
-    return View("~/Views/Home/Admin/AdminDashboard.cshtml");
-}
+            return View("~/Views/Home/Admin/AdminDashboard.cshtml");
+        }
 
 
 
@@ -167,7 +172,7 @@ namespace ASP.NET_Project.Controllers
 
             // Fetch the user including their role
             var user = _context.Users
-                .Include(u => u.Role) // Include Role if necessary
+                .Include(u => u.Role)
                 .FirstOrDefault(u => u.Id == userId);
 
             if (user == null)
@@ -175,20 +180,25 @@ namespace ASP.NET_Project.Controllers
                 return NotFound(); // Handle user not found
             }
 
+            var currentDate = DateTime.Now;
+
+            // Filter projects based on the user's role
+            var projects = user.RoleId == 1
+                ? _context.Projects
+                    .Where(p => p.EndDate < currentDate || p.EndDate >= currentDate) // Overdue or ongoing projects
+                    .ToList()
+                : _context.Projects
+                    .Where(p => p.ProjectManagerId == userId && (p.EndDate < currentDate || p.EndDate >= currentDate))
+                    .ToList();
+
             // Create the view model
             var model = new AdminProjectsViewModel
             {
-                // Get projects based on the user's role
-                Projects = user.RoleId == 1
-                    ? _context.Projects.ToList() // All projects for admin
-                    : _context.Projects
-                        .Where(p => p.ProjectManagerId == userId) // Only user's projects for project managers
-                        .ToList(),
-
+                Projects = projects,
                 ProjectManagers = _context.Users
-                    .Where(u => u.RoleId == 3) // Assuming RoleId 3 is for Project Managers
+                    .Where(u => u.RoleId == 3)
                     .ToList(),
-                Users = _context.Users.ToList() // Get all users for the members dropdown
+                Users = _context.Users.ToList()
             };
 
             // Fetch users with RoleId 2
@@ -200,6 +210,8 @@ namespace ASP.NET_Project.Controllers
 
             return View("~/Views/Home/Admin/AdminProject.cshtml", model);
         }
+
+
 
 
 
@@ -298,11 +310,14 @@ namespace ASP.NET_Project.Controllers
         public IActionResult EditProject(int projectId, string projectName, int projectManagerId, List<int> members, DateTime startDate, DateTime endDate, string description, ProjectStatus status, bool isActive)
         {
             // Retrieve the project from the database
-            var project = _context.Projects.Include(p => p.Users).SingleOrDefault(p => p.Id == projectId);
+            var project = _context.Projects
+                .Include(p => p.Users)
+                .Include(p => p.Tasks) // Include tasks to check their statuses
+                .SingleOrDefault(p => p.Id == projectId);
 
             if (project == null)
             {
-                return NotFound();
+                return Json(new { success = false, message = "Project not found." });
             }
 
             // Validate start and end dates
@@ -316,23 +331,22 @@ namespace ASP.NET_Project.Controllers
                 ModelState.AddModelError("StartDate", "Start date cannot be after the due date.");
             }
 
-            // If there are validation errors, return to the view
+            // Check if trying to set project to Completed when there are InProgress tasks
+            if (status == ProjectStatus.Completed)
+            {
+                // Check if any associated tasks are not completed
+                bool hasInProgressTasks = project.Tasks.Any(t => t.Status != TaskStatus.Completed);
+                if (hasInProgressTasks)
+                {
+                    ModelState.AddModelError("ProjectStatus", "Cannot set project to Completed while there are tasks still In Progress.");
+                }
+            }
+
+            // If there are validation errors, return JSON with the errors
             if (!ModelState.IsValid)
             {
-                var viewModel = new EditProjectViewModel
-                {
-                    ProjectId = project.Id,
-                    ProjectName = project.Name,
-                    ProjectManagerId = project.ProjectManagerId,
-                    StartDate = project.StartDate,
-                    EndDate = project.EndDate,
-                    Description = project.Description,
-                    Status = project.Status,
-                    IsActive = project.IsActive,
-                    Members = _context.Users.Where(u => u.RoleId == 2).ToList() // Get valid users for selection
-                };
-
-                return View(viewModel);
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return Json(new { success = false, message = string.Join(" ", errors) });
             }
 
             // Update the project details
@@ -355,8 +369,10 @@ namespace ASP.NET_Project.Controllers
             // Save changes to the database
             _context.SaveChanges();
 
-            return RedirectToAction("AdminProject");
+            return Json(new { success = true, message = "Project updated successfully." });
         }
+
+
 
         public IActionResult AdminTask()
         {
@@ -450,27 +466,50 @@ namespace ASP.NET_Project.Controllers
         }
 
 
-
         [HttpPost]
-        public IActionResult UpdateUser(User user)
-        {
-            // Fetch the user from the database based on the ID
-            var existingUser = _context.Users.Find(user.Id);
+public IActionResult UpdateUser(User user)
+{
+    // Log incoming user ID
+    Console.WriteLine($"Received User ID: {user.Id}"); // This will log to the console
 
-            if (existingUser != null)
-            {
-                // Update the fields
-                existingUser.UserName = user.UserName;
-                existingUser.RoleId = user.RoleId;
-                existingUser.IsActive = user.IsActive;
+    var existingUser = _context.Users
+        .Include(u => u.Projects)
+        .FirstOrDefault(u => u.Id == user.Id);
 
-                // Save changes to the database
-                _context.SaveChanges();
-            }
+    if (existingUser == null)
+    {
+        Console.WriteLine("User not found."); // Log if user not found
+        return Json(new { success = false, message = "User not found." });
+    }
 
-            // Redirect to the user management page
-            return RedirectToAction("AdminUser");
-        }
+    // Log existing user details
+    Console.WriteLine($"Existing User: {existingUser.UserName}, Active: {existingUser.IsActive}");
+
+    bool hasInProgressProjects = existingUser.Projects
+        .Any(p => p.Status == ProjectStatus.InProgress);
+
+    if (hasInProgressProjects && user.IsActive == false)
+    {
+        Console.WriteLine("Attempting to deactivate a user with InProgress projects."); // Log deactivation attempt
+        return Json(new { success = false, message = "Cannot deactivate a user while they have InProgress projects." });
+    }
+
+    // Update user fields
+    existingUser.UserName = user.UserName;
+    existingUser.IsActive = user.IsActive;
+
+    // Save changes to the database
+    _context.SaveChanges();
+
+    Console.WriteLine("User updated successfully."); // Log successful update
+    return Json(new { success = true, message = "User updated successfully." });
+}
+
+
+
+
+
+
 
         public IActionResult AdminCompleted()
         {
@@ -727,6 +766,35 @@ namespace ASP.NET_Project.Controllers
 
             return View("ProjectView", model);
         }
+
+        [HttpPost]
+        public IActionResult UpdateTaskStatus(int taskId, string status)
+        {
+            var task = _context.Tasks.Find(taskId);
+            var currentUserId = HttpContext.Session.GetInt32("UserId"); // Assuming you're using session to store the logged-in user's ID
+            var currentUser = _context.Users.Find(currentUserId); // Retrieve the current user
+
+            if (task != null && currentUser != null)
+            {
+                // Check if the user is assigned to the task or has RoleId 1 or 3
+                if (task.AssignedToId == currentUser.Id || currentUser.RoleId == 1 || currentUser.RoleId == 3)
+                {
+                    if (Enum.TryParse(status, out TaskStatus taskStatus))
+                    {
+                        task.Status = taskStatus;
+                        _context.SaveChanges();
+                        return Json(new { success = true });
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, message = "You do not have permission to update this task." });
+                }
+            }
+            return Json(new { success = false });
+        }
+
+
 
 
 

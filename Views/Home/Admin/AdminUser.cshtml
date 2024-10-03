@@ -142,6 +142,53 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.14.1/dist/sweetalert2.all.min.js
         });
     });
 
+document.getElementById('editUserForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent default form submission
 
-    document.getElementById("adminUser").classList.add("active");
+    const userId = document.getElementById('editUserId').value; // Log user ID
+    console.log("Submitting User ID: ", userId);
+
+    const formData = new FormData(this);
+    const url = this.action;
+
+    fetch(url, {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok'); // Throw error if network response is not ok
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                title: 'Success!',
+                text: data.message,
+                icon: 'success',
+                confirmButtonText: 'Ok'
+            }).then(() => {
+                location.reload(); // Reload the page on success
+            });
+        } else {
+            Swal.fire({
+                title: 'Error!',
+                text: data.message,
+                icon: 'error',
+                confirmButtonText: 'Ok'
+            });
+        }
+    })
+    .catch(error => {
+        Swal.fire({
+            title: 'Error!',
+            text: error.message || 'An unexpected error occurred.',
+            icon: 'error',
+            confirmButtonText: 'Ok'
+        });
+    });
+});
+
+
 </script>

@@ -63,20 +63,10 @@
                             <td style="text-align: center;">@task.AssignedTo?.UserName</td>
                             <td style="text-align: center;">@task.Status</td>
                             <td style="text-align: center;">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Action
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#">Edit</a></li>
-                                        <li>
-                                            <form method="post" action="/Home/DeleteTask">
-                                                <input type="hidden" name="id" value="@task.Id" />
-                                                <button type="submit" class="dropdown-item">Delete</button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
+                                    <button class="btn btn-success" data-task-id="@task.Id"><i class="bi bi-check-lg"></i></button>
+    <button class="btn btn-danger" data-task-id="@task.Id"><i class="bi bi-arrow-bar-left"></i></button>
+
+
                             </td>
                         </tr>
                     }
@@ -124,13 +114,7 @@
                     </tr>
                     index++;
                 }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="4" style="text-align: center;">No progress available.</td>
-                </tr>
-            }
+                }
         </tbody>
     </table>
 </div>
@@ -189,11 +173,53 @@
 </div>
 
 
-
+<script src="
+https://cdn.jsdelivr.net/npm/sweetalert2@11.14.1/dist/sweetalert2.all.min.js
+"></script>
 @section Scripts {
     <script>
         document.querySelector('.collapse-btn').classList.add("active");
         document.querySelector('.bi-send-fill').style.color = "white";
         document.querySelector('.collapse-btn').style.color = "white";
+
+          // Function to update task status via AJAX
+   function updateTaskStatus(taskId, status) {
+    $.ajax({
+        url: '@Url.Action("UpdateTaskStatus", "Home")',
+        type: 'POST',
+        data: { taskId: taskId, status: status },
+        success: function(response) {
+            if (response.success) {
+                Swal.fire('Success', 'Task status updated!', 'success');
+                setTimeout(function() {
+                    location.reload(); // Reload the page after 2.5 seconds
+                }, 2500); // 2.5 seconds delay
+            } else {
+                Swal.fire('Error', 'Failed to update task status.', 'error');
+            }
+        },
+        error: function() {
+            Swal.fire('Error', 'An error occurred while updating status.', 'error');
+        }
+    });
+}
+
+// Event listeners for success and danger buttons
+document.querySelectorAll('.btn-success').forEach(button => {
+    button.addEventListener('click', function() {
+        const taskId = this.getAttribute('data-task-id'); // Get the task ID from data attribute
+        updateTaskStatus(taskId, 'Completed');
+    });
+});
+
+document.querySelectorAll('.btn-danger').forEach(button => {
+    button.addEventListener('click', function() {
+        const taskId = this.getAttribute('data-task-id'); // Get the task ID from data attribute
+        updateTaskStatus(taskId, 'InProgress');
+    });
+});
+
     </script>
+
+    
 }

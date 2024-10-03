@@ -99,10 +99,66 @@
 https://cdn.jsdelivr.net/npm/sweetalert2@11.14.1/dist/sweetalert2.all.min.js
 "></script>
     <script>
-        new DataTable('#example');
-        new DataTable('#example1');
         new DataTable('#example2')
         new DataTable('#example3')
+
+      $(document).ready(function () {
+    // Check if DataTable is already initialized and destroy it if so
+    if ($.fn.dataTable.isDataTable('#example')) {
+        $('#example').DataTable().destroy();
+    }
+
+    // Initialize DataTable with desired options
+    $('#example').DataTable({
+        pageLength: 50, // Set default page length to 50
+        // Add any other options you need
+    });
+});
+
+$(document).ready(function () {
+    // Check if DataTable is already initialized and destroy it if so
+    if ($.fn.dataTable.isDataTable('#example1')) {
+        $('#example1').DataTable().destroy();
+    }
+
+    // Initialize DataTable with desired options
+    $('#example1').DataTable({
+        pageLength: 50, // Set default page length to 50
+        // Add any other options you need
+    });
+});
+
+$(document).ready(function () {
+    // Check if DataTable is already initialized and destroy it if so
+    if ($.fn.dataTable.isDataTable('#example2')) {
+        $('#example2').DataTable().destroy();
+    }
+
+    // Initialize DataTable with desired options
+    $('#example2').DataTable({
+        pageLength: 50, // Set default page length to 50
+        // Add any other options you need
+    });
+});
+
+$(document).ready(function () {
+    // Check if DataTable is already initialized and destroy it if so
+    if ($.fn.dataTable.isDataTable('#example3')) {
+        $('#example3').DataTable().destroy();
+    }
+
+    // Initialize DataTable with desired options
+    $('#example3').DataTable({
+        pageLength: 50, // Set default page length to 50
+        // Add any other options you need
+    });
+});
+
+
+
+
+
+        
     </script>
 
 @if (ViewBag.Error != null && ViewBag.Error == true)
