@@ -46,9 +46,10 @@ Admin Task
                                         <li><a class="dropdown-item" data-bs-toggle="modal"
                                                 data-bs-target="#editTaskModal">Edit</a></li>
                                         <li>
-                                            <li>
-    <button type="button" class="dropdown-item delete-task-btn" data-task-id="@task.Id">Delete</button>
-</li>
+                                        <li>
+                                            <button type="button" class="dropdown-item delete-task-btn"
+                                                data-task-id="@task.Id">Delete</button>
+                                        </li>
                                         </li>
                                     </ul>
                                 </div>
@@ -234,56 +235,134 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.14.1/dist/sweetalert2.all.min.js
         });
     });
 
-</script>
+     $(document).ready(function () {
+        // Handle form submission for adding a task
+        $('#addTaskForm').on('submit', function (e) {
+            e.preventDefault(); // Prevent the default form submission
 
-
-        <script>
-    $(document).ready(function () {
-    // Handle delete task confirmation
-    $(document).on('click', '.delete-task-btn', function () {
-        var taskId = $(this).data('task-id'); // Get the task ID from the button data
-
-        // Show confirmation dialog using SweetAlert2
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Create a form to submit the deletion request
-                var deleteForm = $('<form>', {
-                    'method': 'post',
-                    'action': '/Home/DeleteTask'
-                });
-                deleteForm.append($('<input>', {
-                    'type': 'hidden',
-                    'name': 'id',
-                    'value': taskId
-                }));
-                deleteForm.appendTo('body').submit(); // Submit the form
-
-                // Show success message
-                Swal.fire({
-                    position: 'center', // Set position to center
-                    icon: 'success',
-                    title: 'Task has been deleted',
-                    showConfirmButton: false,
-                    timer: 3000
-                });
-
-                // Refresh the page after 2 seconds
-                setTimeout(function () {
-                    location.reload();
-                }, 3000);
-            }
+            // Submit the form via AJAX
+            $.ajax({
+                url: $(this).attr('action'), // Use the form's action attribute
+                method: $(this).attr('method'), // Use the form's method attribute
+                data: $(this).serialize(), // Serialize the form data
+                success: function (response) {
+                    // Show success message
+                    Swal.fire({
+                        position: 'center', // Set position to center
+                        icon: 'success',
+                        title: 'Task has been created successfully',
+                        showConfirmButton: false,
+                        timer: 3000
+                    }).then(() => {
+                        // Close the modal
+                        $('.bd-example-modal-lg').modal('hide'); // Close the modal
+                        // Refresh the page after 2 seconds
+                        setTimeout(function () {
+                            location.reload();
+                        }, 2000);
+                    });
+                },
+                error: function () {
+                    // Show error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    });
+                }
+            });
         });
     });
-});
 
+    
+     $(document).ready(function () {
+        // Handle form submission for adding a task
+        $('#editTaskForm').on('submit', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            // Submit the form via AJAX
+            $.ajax({
+                url: $(this).attr('action'), // Use the form's action attribute
+                method: $(this).attr('method'), // Use the form's method attribute
+                data: $(this).serialize(), // Serialize the form data
+                success: function (response) {
+                    // Show success message
+                    Swal.fire({
+                        position: 'center', // Set position to center
+                        icon: 'success',
+                        title: 'Task has been updated successfully',
+                        showConfirmButton: false,
+                        timer: 3000
+                    }).then(() => {
+                        // Close the modal
+                        $('.bd-example-modal-lg').modal('hide'); // Close the modal
+                        // Refresh the page after 2 seconds
+                        setTimeout(function () {
+                            location.reload();
+                        }, 2000);
+                    });
+                },
+                error: function () {
+                    // Show error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    });
+                }
+            });
+        });
+    });
 
 </script>
 
+
+<script>
+    $(document).ready(function () {
+        // Handle delete task confirmation
+        $(document).on('click', '.delete-task-btn', function () {
+            var taskId = $(this).data('task-id'); // Get the task ID from the button data
+
+            // Show confirmation dialog using SweetAlert2
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Create a form to submit the deletion request
+                    var deleteForm = $('<form>', {
+                        'method': 'post',
+                        'action': '/Home/DeleteTask'
+                    });
+                    deleteForm.append($('<input>', {
+                        'type': 'hidden',
+                        'name': 'id',
+                        'value': taskId
+                    }));
+                    deleteForm.appendTo('body').submit(); // Submit the form
+
+                    // Show success message
+                    Swal.fire({
+                        position: 'center', // Set position to center
+                        icon: 'success',
+                        title: 'Task has been deleted',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+
+                    // Refresh the page after 2 seconds
+                    setTimeout(function () {
+                        location.reload();
+                    }, 3000);
+                }
+            });
+        });
+    });
+
+
+</script>

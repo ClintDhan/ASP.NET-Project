@@ -38,6 +38,11 @@ namespace ASP.NET_Project.Controllers
 
                 // Store username in session
                 HttpContext.Session.SetString("UserName", user.UserName);
+                HttpContext.Session.SetInt32("RoleId", user.RoleId); // Assuming RoleId is an integer
+                int roleId = HttpContext.Session.GetInt32("RoleId") ?? 0;
+                ViewBag.roleId = roleId;
+
+
 
                 // Redirect based on role
                 if (user.RoleId == 1 || user.RoleId == 3)
@@ -100,7 +105,7 @@ namespace ASP.NET_Project.Controllers
             return RedirectToAction("Login"); // Redirect to login after successful registration
         }
 
-      public IActionResult AdminDashboard()
+        public IActionResult AdminDashboard()
 {
     var name = HttpContext.Session.GetString("UserName") ?? "";
     ViewBag.Message = name;
@@ -119,75 +124,82 @@ namespace ASP.NET_Project.Controllers
         return NotFound(); // Handle user not found
     }
 
-    IEnumerable<Project> projects;
+    IEnumerable<Project> ongoingProjects;
+    IEnumerable<Project> completedProjects;
+    IEnumerable<Project> overdueProjects;
 
     // Determine which projects to show based on the user's role
     if (user.RoleId == 1) // Admin role
     {
-        projects = _context.Projects.ToList(); // Fetch all projects
+        // Fetch all projects for admin
+        ongoingProjects = _context.Projects.Where(p => p.Status == ProjectStatus.InProgress).ToList();
+        completedProjects = _context.Projects.Where(p => p.Status == ProjectStatus.Completed).ToList();
+        overdueProjects = _context.Projects.Where(p => p.Status == ProjectStatus.Overdue && p.EndDate < DateTime.Now).ToList();
     }
-    else if (user.RoleId == 3) // Regular user role
+    else // For RoleId == 2 or 3 or any other role
     {
-        projects = user.Projects; // Fetch only the user's projects
-    }
-    else
-    {
-        projects = Enumerable.Empty<Project>(); // No projects if role is neither
+        ongoingProjects = _context.Projects.Where(p => p.ProjectManagerId == userId && p.Status == ProjectStatus.InProgress).ToList();
+        completedProjects = _context.Projects.Where(p => p.ProjectManagerId == userId && p.Status == ProjectStatus.Completed).ToList();
+        overdueProjects = _context.Projects.Where(p => p.ProjectManagerId == userId && p.Status == ProjectStatus.Overdue && p.EndDate < DateTime.Now).ToList();
     }
 
     // Calculate counts for the view
-    ViewBag.CompletedCount = projects.Count(p => p.Status == ProjectStatus.Completed);
-    ViewBag.InProgressCount = projects.Count(p => p.Status == ProjectStatus.InProgress);
-    ViewBag.OverdueCount = projects.Count(p => p.Status == ProjectStatus.Overdue && p.EndDate < DateTime.Now);
+    ViewBag.CompletedCount = completedProjects.Count();
+    ViewBag.InProgressCount = ongoingProjects.Count();
+    ViewBag.OverdueCount = overdueProjects.Count();
 
     return View("~/Views/Home/Admin/AdminDashboard.cshtml");
 }
 
 
 
-       public IActionResult AdminProject()
-{
-    var name = HttpContext.Session.GetString("UserName") ?? "";
-    ViewBag.Message = name;
 
-    // Get the current user ID from session
-    int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
 
-    // Fetch the user including their role
-    var user = _context.Users
-        .Include(u => u.Role) // Include Role if necessary
-        .FirstOrDefault(u => u.Id == userId);
 
-    if (user == null)
-    {
-        return NotFound(); // Handle user not found
-    }
 
-    // Create the view model
-    var model = new AdminProjectsViewModel
-    {
-        // Get projects based on the user's role
-        Projects = user.RoleId == 1 
-            ? _context.Projects.ToList() // All projects for admin
-            : _context.Projects
-                .Where(p => p.ProjectManagerId == userId) // Only user's projects for project managers
-                .ToList(),
-                
-        ProjectManagers = _context.Users
-            .Where(u => u.RoleId == 3) // Assuming RoleId 3 is for Project Managers
-            .ToList(),
-        Users = _context.Users.ToList() // Get all users for the members dropdown
-    };
+        public IActionResult AdminProject()
+        {
+            var name = HttpContext.Session.GetString("UserName") ?? "";
+            ViewBag.Message = name;
 
-    // Fetch users with RoleId 2
-    var users = _context.Users
-        .Where(u => u.RoleId == 2)
-        .ToList();
+            // Get the current user ID from session
+            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
 
-    ViewBag.Users = users;
+            // Fetch the user including their role
+            var user = _context.Users
+                .Include(u => u.Role) // Include Role if necessary
+                .FirstOrDefault(u => u.Id == userId);
 
-    return View("~/Views/Home/Admin/AdminProject.cshtml", model);
-}
+            if (user == null)
+            {
+                return NotFound(); // Handle user not found
+            }
+
+            // Create the view model
+            var model = new AdminProjectsViewModel
+            {
+                // Get projects based on the user's role
+                Projects = user.RoleId == 1
+                    ? _context.Projects.ToList() // All projects for admin
+                    : _context.Projects
+                        .Where(p => p.ProjectManagerId == userId) // Only user's projects for project managers
+                        .ToList(),
+
+                ProjectManagers = _context.Users
+                    .Where(u => u.RoleId == 3) // Assuming RoleId 3 is for Project Managers
+                    .ToList(),
+                Users = _context.Users.ToList() // Get all users for the members dropdown
+            };
+
+            // Fetch users with RoleId 2
+            var users = _context.Users
+                .Where(u => u.RoleId == 2)
+                .ToList();
+
+            ViewBag.Users = users;
+
+            return View("~/Views/Home/Admin/AdminProject.cshtml", model);
+        }
 
 
 
@@ -271,15 +283,15 @@ namespace ASP.NET_Project.Controllers
 
 
         [HttpGet]
-public JsonResult GetProjectMembers(int projectId)
-{
-    var members = _context.Projects
-        .Where(p => p.Id == projectId)
-        .SelectMany(p => p.Users.Select(u => new { Id = u.Id, UserName = u.UserName }))
-        .ToList();
+        public JsonResult GetProjectMembers(int projectId)
+        {
+            var members = _context.Projects
+                .Where(p => p.Id == projectId)
+                .SelectMany(p => p.Users.Select(u => new { Id = u.Id, UserName = u.UserName }))
+                .ToList();
 
-    return Json(members);
-}
+            return Json(members);
+        }
 
 
         [HttpPost]
@@ -386,51 +398,57 @@ public JsonResult GetProjectMembers(int projectId)
         }
 
         [HttpPost]
-    public IActionResult EditTask(int projectId, int taskId, string taskName, int assignedToId, string description)
-    {
-        // Fetch the task from the database
-        var task = _context.Tasks.Include(t => t.AssignedTo).FirstOrDefault(t => t.Id == taskId);
-        
-        if (task != null)
+        public IActionResult EditTask(int projectId, int taskId, string taskName, int assignedToId, string description)
         {
-            // Update task properties
-            task.Name = taskName;
-            task.AssignedToId = assignedToId;
-            task.Description = description;
-            
-            _context.SaveChanges();
+            // Fetch the task from the database
+            var task = _context.Tasks.Include(t => t.AssignedTo).FirstOrDefault(t => t.Id == taskId);
+
+            if (task != null)
+            {
+                // Update task properties
+                task.Name = taskName;
+                task.AssignedToId = assignedToId;
+                task.Description = description;
+
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("AdminTask"); // Adjust the redirect as necessary
         }
-        
-        return RedirectToAction("AdminTask"); // Adjust the redirect as necessary
-    }
 
 
 
 
-      public IActionResult AdminUser()
-{
-    var name = HttpContext.Session.GetString("UserName") ?? "";
-    ViewBag.Message = name;
+        public IActionResult AdminUser()
+        {
+            var name = HttpContext.Session.GetString("UserName") ?? "";
+            ViewBag.Message = name;
 
-    // Get the current user ID from the session
-    int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            // Get the current user ID from the session
+            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            ViewBag.Id = userId;
 
-    // Fetch the user from the database
-    var user = _context.Users.Include(u => u.Role).FirstOrDefault(u => u.Id == userId);
+            // Fetch the user from the database
+            var user = _context.Users.Include(u => u.Role).FirstOrDefault(u => u.Id == userId);
 
-    // Check if the user is found and if they have RoleId 3
-    if (user == null || user.RoleId == 3)
-    {
-        // Redirect to an access denied page
-        return RedirectToAction("AccessDenied", "Home"); // Adjust the controller name as needed
-    }
+            // Check if the user is found and if they have RoleId 3
+            if (user == null || user.RoleId == 3)
+            {
+                // Set an error flag in ViewBag
+                ViewBag.Error = true;
+                ViewBag.ErrorMessage = "Access Denied! You do not have the necessary permissions.";
 
-    // Fetch all users from the database
-    var users = _context.Users.Include(u => u.Role).ToList();  // Assuming Role is a navigation property
+                // Pass an empty list to the view to avoid null reference
+                return View("~/Views/Home/Admin/AdminDashboard.cshtml");
+            }
 
-    // Pass the list of users to the view
-    return View("~/Views/Home/Admin/AdminUser.cshtml", users);
-}
+            // Fetch all users from the database
+            var users = _context.Users.Include(u => u.Role).ToList();  // Assuming Role is a navigation property
+
+            // Pass the list of users to the view
+            return View("~/Views/Home/Admin/AdminUser.cshtml", users);
+        }
+
 
 
         [HttpPost]
@@ -454,54 +472,54 @@ public JsonResult GetProjectMembers(int projectId)
             return RedirectToAction("AdminUser");
         }
 
-      public IActionResult AdminCompleted()
-{
-    var name = HttpContext.Session.GetString("UserName") ?? "";
-    ViewBag.Message = name;
+        public IActionResult AdminCompleted()
+        {
+            var name = HttpContext.Session.GetString("UserName") ?? "";
+            ViewBag.Message = name;
 
-    var model = new AdminCompletedProjectsViewModel
-    {
-        // Get only projects with a status of Completed
-        Projects = _context.Projects
-            .Where(p => p.Status == ProjectStatus.Completed)
-            .ToList()
-    };
+            var model = new AdminCompletedProjectsViewModel
+            {
+                // Get only projects with a status of Completed
+                Projects = _context.Projects
+                    .Where(p => p.Status == ProjectStatus.Completed)
+                    .ToList()
+            };
 
-    return View("~/Views/Home/Admin/AdminCompleted.cshtml", model);
-}
+            return View("~/Views/Home/Admin/AdminCompleted.cshtml", model);
+        }
 
 
 
-       public IActionResult UserDashboard()
-{
-    var name = HttpContext.Session.GetString("UserName") ?? "";
-    ViewBag.Message = name;
+        public IActionResult UserDashboard()
+        {
+            var name = HttpContext.Session.GetString("UserName") ?? "";
+            ViewBag.Message = name;
 
-    // Get the current user's ID from the session
-    int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            // Get the current user's ID from the session
+            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
 
-    // Fetch the user's projects based on their role
-    var ongoingProjects = _context.Projects
-        .Where(p => p.Users.Any(u => u.Id == userId) && p.Status == ProjectStatus.InProgress)
-        .ToList();
+            // Fetch the user's projects based on their role
+            var ongoingProjects = _context.Projects
+                .Where(p => p.Users.Any(u => u.Id == userId) && p.Status == ProjectStatus.InProgress)
+                .ToList();
 
-    var completedProjects = _context.Projects
-        .Where(p => p.Users.Any(u => u.Id == userId) && p.Status == ProjectStatus.Completed)
-        .ToList();
+            var completedProjects = _context.Projects
+                .Where(p => p.Users.Any(u => u.Id == userId) && p.Status == ProjectStatus.Completed)
+                .ToList();
 
-    var overdueProjects = _context.Projects
-        .Where(p => p.Users.Any(u => u.Id == userId) && p.Status == ProjectStatus.Overdue)
-        .ToList();
+            var overdueProjects = _context.Projects
+                .Where(p => p.Users.Any(u => u.Id == userId) && p.Status == ProjectStatus.Overdue)
+                .ToList();
 
-    var model = new UserDashboardViewModel
-    {
-        OngoingProjects = ongoingProjects,
-        CompletedProjects = completedProjects,
-        OverdueProjects = overdueProjects
-    };
+            var model = new UserDashboardViewModel
+            {
+                OngoingProjects = ongoingProjects,
+                CompletedProjects = completedProjects,
+                OverdueProjects = overdueProjects
+            };
 
-    return View("~/Views/Home/User/UserDashboard.cshtml", model);
-}
+            return View("~/Views/Home/User/UserDashboard.cshtml", model);
+        }
 
 
 

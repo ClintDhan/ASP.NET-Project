@@ -91,7 +91,7 @@ Admin Projects
         <h5 class="modal-title" id="addProjectLabel">Add Project</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="post" action="/Home/CreateProject">
+      <form id="addProjectForm" method="post" action="/Home/CreateProject">
         <div class="modal-body">
           <div class="flx-row">
             <div>
@@ -166,7 +166,7 @@ Admin Projects
         <h5 class="modal-title" id="editProjectLabel">Edit Project</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="post" action="/Home/EditProject">
+      <form id="editProjectForm" method="post" action="/Home/EditProject">
         <div class="modal-body">
           <input type="hidden" id="projectId" name="projectId" />
           <div class="flx-row">
@@ -255,6 +255,9 @@ Admin Projects
 
 
 @section Scripts {
+  <script src="
+https://cdn.jsdelivr.net/npm/sweetalert2@11.14.1/dist/sweetalert2.all.min.js
+"></script>
   <script>
     $(document).ready(function () {
       let memberCount = 1; // Initial member count for the add project modal
@@ -354,6 +357,83 @@ Admin Projects
         }
       });
     });
+
+    $(document).ready(function () {
+    // Handle add project submission
+    $('#addProjectForm').on('submit', function (e) {
+        e.preventDefault(); // Prevent the default form submission
+
+        // Use AJAX to submit the form
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'), // Get the form action URL
+            data: $(this).serialize(), // Serialize the form data
+            success: function () {
+                // Show success message
+                Swal.fire({
+                    position: 'center', // Set position to center
+                    icon: 'success',
+                    title: 'Project has been added',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+
+                // Refresh the page after 2 seconds
+                setTimeout(function () {
+                    location.reload();
+                }, 3000);
+            },
+            error: function () {
+                // Show error message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong!',
+                });
+            }
+        });
+    });
+});
+
+
+$(document).ready(function () {
+    // Handle edit project submission
+    $('#editProjectForm').on('submit', function (e) {
+        e.preventDefault(); // Prevent the default form submission
+
+        // Use AJAX to submit the form
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'), // Get the form action URL
+            data: $(this).serialize(), // Serialize the form data
+            success: function () {
+                // Show success message
+                Swal.fire({
+                    position: 'center', // Set position to center
+                    icon: 'success',
+                    title: 'Project has been updated',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+
+                // Refresh the page after 2 seconds
+                setTimeout(function () {
+                    location.reload();
+                }, 3000);
+            },
+            error: function () {
+                // Show error message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong!',
+                });
+            }
+        });
+    });
+});
+
+
     document.querySelector('.collapse-btn').classList.add("active");
     document.querySelector('.bi-send-fill').style.color = "white";
     document.querySelector('.collapse-btn').style.color = "white";
