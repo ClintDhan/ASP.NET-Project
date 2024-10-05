@@ -5,64 +5,131 @@ using Microsoft.AspNetCore.Mvc;
 using ASP.NET_Project.Models;
 using Microsoft.EntityFrameworkCore;
 using TaskStatus = ASP.NET_Project.Models.TaskStatus;
-
+using ASP.NET_Project.Services;
 namespace ASP.NET_Project.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _context; // Use your actual context class
         private readonly ILogger<HomeController> _logger;
+        private readonly EmailService _emailService;
 
-        public HomeController(ApplicationDbContext context, ILogger<HomeController> logger)
+
+        public HomeController(ApplicationDbContext context, ILogger<HomeController> logger, EmailService emailService)
         {
             _context = context;
             _logger = logger;
+            _emailService = emailService;
         }
 
-        public IActionResult Login()
-        {
-            return View();
-        }
 
-       [HttpPost]
+
+
+[HttpPost]
 public IActionResult Login(string email, string password)
 {
-    // Find the user based on email and password
     var user = _context.Users.SingleOrDefault(u => u.Email == email && u.Password == password);
 
-    // Check if the user exists
     if (user != null)
     {
-        // Check if the user is active
         if (!user.IsActive)
         {
-            // Redirect to the login view with an error message
             ViewBag.ErrorMessage = "Your account is Inactive. Contact an Admin to change Account Status.";
             return View();
         }
 
-        // Proceed if the user is active
+        // Set session variables
         HttpContext.Session.SetInt32("UserId", user.Id);
         HttpContext.Session.SetString("UserName", user.UserName);
-        HttpContext.Session.SetInt32("RoleId", user.RoleId); // Assuming RoleId is an integer
-        int roleId = HttpContext.Session.GetInt32("RoleId") ?? 0;
-        ViewBag.roleId = roleId;
+        HttpContext.Session.SetInt32("RoleId", user.RoleId);
 
-        // Redirect based on role
-        if (user.RoleId == 1 || user.RoleId == 3)
-        {
-            return RedirectToAction("AdminDashboard");
-        }
-        else if (user.RoleId == 2)
-        {
-            return RedirectToAction("UserDashboard");
-        }
+        // Generate OTP
+        string otp = GenerateOtp();
+        _emailService.SendOtpEmail(email, otp);
+
+        // Store OTP and email in session
+        HttpContext.Session.SetString("Otp", otp);
+        HttpContext.Session.SetString("Email", email);
+        TempData["SuccessMessage"] = $"OTP has been sent to {email}.";
+
+
+        // Redirect to the OtpView
+        return RedirectToAction("OtpView");
     }
 
     ViewBag.ErrorMessage = "Invalid email or password.";
     return View();
 }
 
+
+
+
+
+[HttpPost]
+public IActionResult ValidateOtp(string otpInput)
+{
+    // Retrieve data from session
+    string storedOtp = HttpContext.Session.GetString("Otp");
+    string email = HttpContext.Session.GetString("Email");
+
+    // Check if the OTP matches
+    if (storedOtp != otpInput)
+    {
+        ViewBag.ErrorMessage = "Invalid OTP. Please try again.";
+        return View("OtpView");
+    }
+
+    // Find the user based on the stored email
+    var user = _context.Users.SingleOrDefault(u => u.Email == email);
+
+    // Check if the user exists
+    if (user == null)
+    {
+        ViewBag.ErrorMessage = "User not found. Please try again.";
+        return View("OtpView");
+    }
+
+    // Set session variables for the user
+    HttpContext.Session.SetInt32("UserId", user.Id);
+    HttpContext.Session.SetString("UserName", user.UserName);
+    HttpContext.Session.SetInt32("RoleId", user.RoleId);
+
+    // Redirect based on user role
+    if (user.RoleId == 1 || user.RoleId == 3)
+    {
+        return RedirectToAction("AdminDashboard");
+    }
+    else if (user.RoleId == 2)
+    {
+        return RedirectToAction("UserDashboard");
+    }
+
+    ViewBag.ErrorMessage = "User role is not recognized. Please contact support.";
+    return View("OtpView");
+}
+
+
+
+
+
+
+
+
+
+        private string GenerateOtp()
+        {
+            Random random = new Random();
+            return random.Next(100000, 999999).ToString();
+        }
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        public IActionResult OtpView()
+        {
+            return View();
+        }
 
 
 
@@ -94,20 +161,98 @@ public IActionResult Login(string email, string password)
                 ModelState.AddModelError("", "Username or email already exists.");
                 return View("Signup"); // Return to the signup view
             }
+              // Generate OTP
+            string otp = GenerateOtp();
 
+            // Log the OTP for debugging purposes
+            Console.WriteLine("OTP generated: " + otp);
+
+            // Store user details in session (so they can be accessed after OTP verification)
+            HttpContext.Session.SetString("UserName", UserName);
+            HttpContext.Session.SetString("Email", Email);
+            HttpContext.Session.SetString("Password", Password);
+            HttpContext.Session.SetInt32("RoleId", RoleId);
+            HttpContext.Session.SetString("Otp", otp);
+
+            // Send OTP to email
+            try
+            {
+                _emailService.SendOtpEmail(Email, otp);
+                TempData["SuccessMessage"] = $"OTP has been sent to {Email}.";
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "There was an error sending the OTP email. Please try again.";
+                return View("Signup");
+            }
+
+            // Redirect to OTP verification view
+            return RedirectToAction("OtpRegView");
+
+            // var user = new User
+            // {
+            //     UserName = UserName,
+            //     Email = Email,
+            //     Password = Password, // Store plain text as per your preference
+            //     RoleId = 2,
+            //     IsActive = true
+            // };
+
+            // _context.Users.Add(user);
+            // _context.SaveChanges();
+
+            // return RedirectToAction("Login"); // Redirect to login after successful registration
+        }
+        [HttpPost]
+        public IActionResult ValidateRegistrationOtp(string otpInput)
+        {
+            // Retrieve stored OTP and user details from session
+            string storedOtp = HttpContext.Session.GetString("Otp");
+            string storedEmail = HttpContext.Session.GetString("Email");
+            string storedUserName = HttpContext.Session.GetString("UserName");
+            string storedPassword = HttpContext.Session.GetString("Password");
+            int? storedRoleId = HttpContext.Session.GetInt32("RoleId");
+
+            // Check if OTP matches
+            if (storedOtp != otpInput)
+            {
+                ViewBag.ErrorMessage = "Invalid OTP. Please try again.";
+                return View("OtpRegView");
+            }
+
+            // Check if user details exist in the session
+            if (storedEmail == null || storedUserName == null || storedPassword == null || storedRoleId == null)
+            {
+                ViewBag.ErrorMessage = "Error processing registration. Please try again.";
+                return View("OtpRegView");
+            }
+
+            // Now create the user in the database
             var user = new User
             {
-                UserName = UserName,
-                Email = Email,
-                Password = Password, // Store plain text as per your preference
-                RoleId = RoleId,
-                IsActive = true
+                UserName = storedUserName,
+                Email = storedEmail,
+                Password = storedPassword, // Assuming plain text, adjust to hash if needed
+                // RoleId = storedRoleId.Value,
+                IsActive = true,
+                RoleId = 2
             };
 
             _context.Users.Add(user);
             _context.SaveChanges();
 
-            return RedirectToAction("Login"); // Redirect to login after successful registration
+            // Clear session after successful registration
+            HttpContext.Session.Clear();
+
+            // Return success response
+    return Json(new { success = true, message = "Successfully created the account!" });
+        }
+
+        // Sample method to generate an OTP
+
+        public IActionResult OtpRegView()
+        {
+            return View(); // This view should have a form to input OTP
         }
 
         public IActionResult AdminDashboard()
@@ -180,6 +325,14 @@ public IActionResult Login(string email, string password)
                 return NotFound(); // Handle user not found
             }
 
+            // Update project statuses based on overdue conditions for all projects
+            var allProjects = _context.Projects.ToList();
+            foreach (var project in allProjects)
+            {
+                UpdateProjectStatusIfOverdue(project.Id); // Call the method to check and update status
+            }
+
+            // Get the current date for filtering projects
             var currentDate = DateTime.Now;
 
             // Filter projects based on the user's role
@@ -210,6 +363,18 @@ public IActionResult Login(string email, string password)
 
             return View("~/Views/Home/Admin/AdminProject.cshtml", model);
         }
+
+        public void UpdateProjectStatusIfOverdue(int projectId)
+        {
+            var project = _context.Projects.SingleOrDefault(p => p.Id == projectId);
+            if (project != null && project.Status == ProjectStatus.InProgress && DateTime.Now > project.EndDate)
+            {
+                project.Status = ProjectStatus.Overdue; // Update the status to Overdue
+                project.IsActive = false; // Set the project to InActive
+                _context.SaveChanges(); // Save changes to update the database
+            }
+        }
+
 
 
 
@@ -335,9 +500,10 @@ public IActionResult Login(string email, string password)
             if (status == ProjectStatus.Completed)
             {
                 // Check if any associated tasks are not completed
-                bool hasInProgressTasks = project.Tasks.Any(t => t.Status != TaskStatus.Completed);
+                bool hasInProgressTasks = project.Tasks.Any(t => t.Status == TaskStatus.InProgress);
                 if (hasInProgressTasks)
                 {
+                    // Add a model state error
                     ModelState.AddModelError("ProjectStatus", "Cannot set project to Completed while there are tasks still In Progress.");
                 }
             }
@@ -371,6 +537,7 @@ public IActionResult Login(string email, string password)
 
             return Json(new { success = true, message = "Project updated successfully." });
         }
+
 
 
 
@@ -467,43 +634,63 @@ public IActionResult Login(string email, string password)
 
 
         [HttpPost]
-public IActionResult UpdateUser(User user)
-{
-    // Log incoming user ID
-    Console.WriteLine($"Received User ID: {user.Id}"); // This will log to the console
+        public IActionResult UpdateUser(User updatedUser)
+        {
+            var user = _context.Users.Find(updatedUser.Id);
 
-    var existingUser = _context.Users
-        .Include(u => u.Projects)
-        .FirstOrDefault(u => u.Id == user.Id);
+            if (user == null)
+            {
+                return Json(new { success = false, message = "User not found." });
+            }
 
-    if (existingUser == null)
-    {
-        Console.WriteLine("User not found."); // Log if user not found
-        return Json(new { success = false, message = "User not found." });
-    }
+            // Track which fields are being updated
+            bool isUserNameUpdated = user.UserName != updatedUser.UserName;
+            bool isRoleOrIsActiveUpdated = user.RoleId != updatedUser.RoleId || user.IsActive != updatedUser.IsActive;
 
-    // Log existing user details
-    Console.WriteLine($"Existing User: {existingUser.UserName}, Active: {existingUser.IsActive}");
+            // Check if the user is involved in any in-progress projects
+            bool hasInProgressProjects = _context.Projects
+                .Any(p => p.Users.Any(u => u.Id == user.Id) && p.Status == ProjectStatus.InProgress);
 
-    bool hasInProgressProjects = existingUser.Projects
-        .Any(p => p.Status == ProjectStatus.InProgress);
+            // Case 1: If both UserName and Role/IsActive are being updated together, block the update
+            if (isUserNameUpdated && isRoleOrIsActiveUpdated)
+            {
+                return Json(new { success = false, message = "You cannot update both the name and role or active status at the same time." });
+            }
 
-    if (hasInProgressProjects && user.IsActive == false)
-    {
-        Console.WriteLine("Attempting to deactivate a user with InProgress projects."); // Log deactivation attempt
-        return Json(new { success = false, message = "Cannot deactivate a user while they have InProgress projects." });
-    }
+            // Case 2: If Role or IsActive is being updated while user has in-progress projects, block the update
+            if (isRoleOrIsActiveUpdated && hasInProgressProjects)
+            {
+                return Json(new { success = false, message = "You cannot update the role or active status while the user is part of in-progress projects." });
+            }
 
-    // Update user fields
-    existingUser.UserName = user.UserName;
-    existingUser.IsActive = user.IsActive;
+            // Apply updates only if no conflicts exist
+            if (isUserNameUpdated)
+            {
+                // Only UserName is updated
+                user.UserName = updatedUser.UserName;
+            }
 
-    // Save changes to the database
-    _context.SaveChanges();
+            if (isRoleOrIsActiveUpdated)
+            {
+                // Only Role or IsActive is updated
+                user.RoleId = updatedUser.RoleId;
+                user.IsActive = updatedUser.IsActive;
+            }
 
-    Console.WriteLine("User updated successfully."); // Log successful update
-    return Json(new { success = true, message = "User updated successfully." });
-}
+            // Save changes only if a valid update was made
+            if (isUserNameUpdated || isRoleOrIsActiveUpdated)
+            {
+                _context.SaveChanges();
+                return Json(new { success = true, message = "User updated successfully." });
+            }
+
+            return Json(new { success = false, message = "No changes were made." });
+        }
+
+
+
+
+
 
 
 

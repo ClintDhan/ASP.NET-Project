@@ -1,3 +1,47 @@
+@{
+    ViewBag.Title = "Signup";
+}
+
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
+
+
+
+
+
+
+
+
+
+
+
+{
+    <div class="alert alert-success">
+        @ViewBag.SuccessMessage
+    </div>
+}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -33,10 +77,10 @@
                 <br>
                 <input type="password" name="ConfirmPassword" class="input-pass-signin" placeholder="Repeat password"
                     required> <br>
-                <select name="RoleId" style="width: 18.75rem; height: 2.5rem; margin-top: 0;">
-                    <option value="1">Admin</option>
-                    <option value="2">User</option>
-                </select>
+                @* <select name="RoleId" style="width: 18.75rem; height: 2.5rem; margin-top: 0;">
+                <option value="1">Admin</option>
+                <option value="2">User</option>
+                </select> *@
                 <input type="submit" class="input-submit" value="SIGN UP"> <br>
                 <a href="/Home/Login" class="form-link">Login here</a>
             </form>

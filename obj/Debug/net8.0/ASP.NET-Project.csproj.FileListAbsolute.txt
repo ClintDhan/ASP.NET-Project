@@ -137,3 +137,6 @@ D:\xampp4\htdocs\ASP.NET-Project\obj\Debug\net8.0\refint\ASP.NET-Project.dll
 D:\xampp4\htdocs\ASP.NET-Project\obj\Debug\net8.0\ASP.NET-Project.pdb
 D:\xampp4\htdocs\ASP.NET-Project\obj\Debug\net8.0\ASP.NET-Project.genruntimeconfig.cache
 D:\xampp4\htdocs\ASP.NET-Project\obj\Debug\net8.0\ref\ASP.NET-Project.dll
+D:\xampp4\htdocs\ASP.NET-Project\bin\Debug\net8.0\RestSharp.dll
+D:\xampp4\htdocs\ASP.NET-Project\bin\Debug\net8.0\SendGrid.dll
+D:\xampp4\htdocs\ASP.NET-Project\bin\Debug\net8.0\StarkbankEcdsa.dll
