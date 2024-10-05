@@ -749,40 +749,36 @@ public IActionResult ValidateOtp(string otpInput)
 
 
 
-        public IActionResult UserProject()
+       public IActionResult UserProject()
+{
+    var name = HttpContext.Session.GetString("UserName") ?? "";
+    ViewBag.Message = name;
+    var userId = HttpContext.Session.GetInt32("UserId");
+
+    if (userId == null)
+    {
+        _logger.LogWarning("User attempted to access UserProject without being logged in.");
+        return RedirectToAction("Login");
+    }
+
+    var projects = _context.Projects
+        .Where(p => p.Users.Any(u => u.Id == userId))
+        .Select(p => new
         {
-            var name = HttpContext.Session.GetString("UserName") ?? "";
-            ViewBag.Message = name;
-            // Get the UserId from session
-            var userId = HttpContext.Session.GetInt32("UserId");
+            ProjectId = p.Id,
+            ProjectName = p.Name,
+            StartDate = p.StartDate,
+            DueDate = p.EndDate,
+            Status = p.Status,
+            IsActive = p.IsActive // Include IsActive status
+        })
+        .ToList();
 
-            // Check if the user is not logged in
-            if (userId == null)
-            {
-                // Log the attempt to access without being logged in
-                _logger.LogWarning("User attempted to access UserProject without being logged in.");
-                return RedirectToAction("Login");
-            }
+    _logger.LogInformation("Fetched {Count} projects for User {UserId}", projects.Count, userId);
 
-            // Fetch projects associated with the user
-            var projects = _context.Projects
-                .Where(p => p.Users.Any(u => u.Id == userId)) // Filter projects by users
-                .Select(p => new
-                {
-                    ProjectId = p.Id, // Change to ProjectId
-                    ProjectName = p.Name,
-                    StartDate = p.StartDate,
-                    DueDate = p.EndDate,
-                    Status = p.Status
-                })
-                .ToList();
+    return View("~/Views/Home/User/UserProject.cshtml", projects);
+}
 
-            // Log the projects for debugging
-            _logger.LogInformation("Fetched {Count} projects for User {UserId}", projects.Count, userId);
-
-            // Return the view with the fetched projects
-            return View("~/Views/Home/User/UserProject.cshtml", projects);
-        }
 
 
 
@@ -946,7 +942,8 @@ public IActionResult ValidateOtp(string otpInput)
                 DueDate = project.EndDate,
                 Description = project.Description,
                 Tasks = project.Tasks.ToList(),
-                Progresses = project.Tasks.SelectMany(t => t.Progresses).ToList() // Collect all progress data
+                Progresses = project.Tasks.SelectMany(t => t.Progresses).ToList(),
+                Status = project.Status // Ensure you pass the project status
             };
 
             ViewData["IsAdmin"] = user?.RoleId == 1 || user?.RoleId == 3;
@@ -999,6 +996,7 @@ public IActionResult ValidateOtp(string otpInput)
             public List<Progress> Progresses { get; set; } // Include progress data
 
             public List<ASP.NET_Project.Models.Task> Tasks { get; set; } = new List<ASP.NET_Project.Models.Task>(); // Specify the full namespace
+            public ProjectStatus Status { get; set; }
         }
 
         public class TaskProgressViewModel

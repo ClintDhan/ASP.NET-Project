@@ -78,7 +78,23 @@
 <div class="table-container">
     <div class="table-header">
         <p>Progress</p>
-        <button data-bs-toggle="modal" data-bs-target="#addProgressModal">Add Progress</button>
+       @if (Model.Status == ProjectStatus.InProgress)
+{
+    <!-- Allow adding progress if the project is in progress -->
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProgressModal">Add Progress</button>
+}
+else if (Model.Status == ProjectStatus.Overdue)
+{
+    <!-- Show SweetAlert2 if the project is overdue -->
+    <button class="btn btn-danger" onclick="showOverdueAlert()">Add Progress</button>
+}
+else if (Model.Status == ProjectStatus.Completed)
+{
+    <!-- Show SweetAlert2 if the project is completed -->
+    <button class="btn btn-warning" onclick="showCompletedAlert()">Add Progress</button>
+}
+
+
     </div>
     <table id="example2" class="table table-striped" style="width:100%">
         <thead>
@@ -218,6 +234,25 @@ document.querySelectorAll('.btn-danger').forEach(button => {
         updateTaskStatus(taskId, 'InProgress');
     });
 });
+
+   function showOverdueAlert() {
+        Swal.fire({
+            icon: 'error',
+            title: 'Project Overdue',
+            text: 'The project is overdue, you cannot add progress!',
+            confirmButtonText: 'OK'
+        });
+    }
+
+    // Function to show the alert for completed projects
+    function showCompletedAlert() {
+        Swal.fire({
+            icon: 'info',
+            title: 'Project Completed',
+            text: 'The project is already completed, no more progress can be added!',
+            confirmButtonText: 'OK'
+        });
+    }
 
     </script>
 

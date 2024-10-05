@@ -15,43 +15,56 @@ User Projects
 
 
     <div class="project-container" style="margin-top: 10.3vh;">
-
-        <div class="scroll-container">
-            <table id="example" class="table table-striped" style="width:100%">
-                <thead>
+    <div class="scroll-container">
+        <table id="example" class="table table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th style="width: 10vw;">Project Name</th>
+                    <th>Start Date</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Condition</th> <!-- New column for Active/Inactive status -->
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int index = 1; }
+                @foreach (var project in Model)
+                {
                     <tr>
-                        <th>#</th>
-                        <th style="width: 10vw;">Project Name</th>
-                        <th>Start Date</th>
-                        <th>Due Date</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <td>@index</td>
+                        <td>@project.ProjectName</td>
+                        <td>@project.StartDate.ToString("yyyy-MM-dd")</td>
+                        <td>@project.DueDate.ToString("yyyy-MM-dd")</td>
+                        <td>@project.Status.ToString()</td>
+                        <td>@(project.IsActive ? "Active" : "Inactive")</td> <!-- Check IsActive field -->
+                        <td>
+                            @if (project.IsActive)
+                {
+                    <!-- Allow navigation if project is active -->
+                    <button class="btn btn-primary">
+                        <a class="dropdown-item" href="@Url.Action("ViewProject", "Home", new { projectId = project.ProjectId })">
+                            View
+                        </a>
+                    </button>
+                }
+                else
+                {
+                    <!-- Trigger SweetAlert2 if project is inactive -->
+                    <button class="btn btn-danger" onclick="showInactiveAlert()">
+                        View
+                    </button>
+                }
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                  @{int index = 1; }
-                    @foreach (var project in Model)
-                    {
-                        <tr>
-                            <td>@index</td>
-                            <td>@project.ProjectName</td>
-                            <td>@project.StartDate.ToString("yyyy-MM-dd")</td>
-                            <td>@project.DueDate.ToString("yyyy-MM-dd")</td>
-                            <td>@project.Status.ToString()</td>
-                            <td>
-                                <button class="btn btn-primary" ><a class="dropdown-item" href="@Url.Action("ViewProject", "Home", new { projectId = project.ProjectId })">
-                                    View
-                                </a></button>
-                        
-                            </td>
-                        </tr>
-                        index++; // Increment the index for the next row
-                    }
-                </tbody>
-
-            </table>
-        </div>
+                    index++; // Increment the index for the next row
+                }
+            </tbody>
+        </table>
     </div>
+</div>
+
 </div>
 
 <!-- Modal -->
@@ -116,10 +129,19 @@ User Projects
         </div>
     </div>
 </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.1/dist/sweetalert2.all.min.js"></script>
 
 @section Scripts {
     <script>
 
         document.getElementById("UserProject").classList.add("active");
+         function showInactiveAlert() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Project Inactive',
+                text: 'You cannot view this project because it is inactive.',
+                confirmButtonText: 'Okay'
+            });
+        }
     </script>
 }
