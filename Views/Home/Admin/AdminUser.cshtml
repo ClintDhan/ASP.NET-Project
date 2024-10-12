@@ -1,5 +1,6 @@
 @model List<ASP.NET_Project.Models.User>
 
+
 @{
     Layout = "~/Views/Shared/AdminLayout.cshtml";
 }
@@ -80,7 +81,6 @@ Admin User
                         <div class="" style="margin-left: 1rem;">
                             <label for="editUserRole">Role:</label><br>
                             <select name="RoleId" id="editUserRole">
-                                <option value="1">Admin</option>
                                 <option value="2">User</option>
                                 <option value="3">Project Manager</option>
                             </select>
@@ -143,10 +143,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.14.1/dist/sweetalert2.all.min.js
     });
 
 document.getElementById('editUserForm').addEventListener('submit', function (event) {
-    event.preventDefault(); // Prevent default form submission
-
-    const userId = document.getElementById('editUserId').value; // Log user ID
-    console.log("Submitting User ID: ", userId);
+    event.preventDefault();
 
     const formData = new FormData(this);
     const url = this.action;
@@ -155,40 +152,42 @@ document.getElementById('editUserForm').addEventListener('submit', function (eve
         method: 'POST',
         body: formData,
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok'); // Throw error if network response is not ok
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-        if (data.success) {
+        if (data.status === "Error") {
+            // Display error message using SweetAlert2
+            Swal.fire({
+                title: 'Error!',
+                html: data.message, // Show error message from the server
+                icon: 'error',
+                confirmButtonText: 'Ok'
+            });
+        } else {
+            // Display success message using SweetAlert2
             Swal.fire({
                 title: 'Success!',
-                text: data.message,
+                text: data.message, // Show success message from the server
                 icon: 'success',
                 confirmButtonText: 'Ok'
             }).then(() => {
-                location.reload(); // Reload the page on success
-            });
-        } else {
-            Swal.fire({
-                title: 'Error!',
-                text: data.message,
-                icon: 'error',
-                confirmButtonText: 'Ok'
+                location.reload(); // Reload the page after success
             });
         }
     })
     .catch(error => {
+        // Handle any unexpected errors
         Swal.fire({
             title: 'Error!',
-            text: error.message || 'An unexpected error occurred.',
+            html: error.message,
             icon: 'error',
             confirmButtonText: 'Ok'
         });
     });
 });
+
+
+
+
 
 document.getElementById('adminUser').classList.add("active");
 

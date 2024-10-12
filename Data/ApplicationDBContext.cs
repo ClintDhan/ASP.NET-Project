@@ -12,8 +12,8 @@ namespace ASP.NET_Project.Models
         public DbSet<Role> Roles { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<Task> Tasks { get; set; }
-        public DbSet<Notification> Notifications { get; set; }
-        public DbSet<Progress> Progresses { get; set; }
+                public DbSet<Progress> Progresses { get; set; }
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

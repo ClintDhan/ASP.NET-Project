@@ -43,18 +43,27 @@ public IActionResult Login(string email, string password)
         HttpContext.Session.SetString("UserName", user.UserName);
         HttpContext.Session.SetInt32("RoleId", user.RoleId);
 
-        // Generate OTP
-        string otp = GenerateOtp();
-        _emailService.SendOtpEmail(email, otp);
+        // // Generate OTP
+        // string otp = GenerateOtp();
+        // _emailService.SendOtpEmail(email, otp);
 
-        // Store OTP and email in session
-        HttpContext.Session.SetString("Otp", otp);
-        HttpContext.Session.SetString("Email", email);
-        TempData["SuccessMessage"] = $"OTP has been sent to {email}.";
+        // // Store OTP and email in session
+        // HttpContext.Session.SetString("Otp", otp);
+        // HttpContext.Session.SetString("Email", email);
+        // TempData["SuccessMessage"] = $"OTP has been sent to {email}.";
 
 
-        // Redirect to the OtpView
-        return RedirectToAction("OtpView");
+        // // Redirect to the OtpView
+        // return RedirectToAction("OtpView");
+         // Redirect based on user role
+    if (user.RoleId == 1 || user.RoleId == 3)
+    {
+        return RedirectToAction("AdminDashboard");
+    }
+    else if (user.RoleId == 2)
+    {
+        return RedirectToAction("UserDashboard");
+    }
     }
 
     ViewBag.ErrorMessage = "Invalid email or password.";
@@ -65,50 +74,48 @@ public IActionResult Login(string email, string password)
 
 
 
-[HttpPost]
-public IActionResult ValidateOtp(string otpInput)
-{
-    // Retrieve data from session
-    string storedOtp = HttpContext.Session.GetString("Otp");
-    string email = HttpContext.Session.GetString("Email");
+// [HttpPost]
+// public IActionResult ValidateOtp(string otpInput)
+// {
+//     // Retrieve data from session
+//     string storedOtp = HttpContext.Session.GetString("Otp");
+//     string email = HttpContext.Session.GetString("Email");
 
-    // Check if the OTP matches
-    if (storedOtp != otpInput)
-    {
-        ViewBag.ErrorMessage = "Invalid OTP. Please try again.";
-        return View("OtpView");
-    }
+//     // Check if the OTP matches
+//     if (storedOtp != otpInput)
+//     {
+//         ViewBag.ErrorMessage = "Invalid OTP. Please try again.";
+//         return View("OtpView");
+//     }
 
-    // Find the user based on the stored email
-    var user = _context.Users.SingleOrDefault(u => u.Email == email);
+//     // Find the user based on the stored email
+//     var user = _context.Users.SingleOrDefault(u => u.Email == email);
 
-    // Check if the user exists
-    if (user == null)
-    {
-        ViewBag.ErrorMessage = "User not found. Please try again.";
-        return View("OtpView");
-    }
+//     // Check if the user exists
+//     if (user == null)
+//     {
+//         ViewBag.ErrorMessage = "User not found. Please try again.";
+//         return View("OtpView");
+//     }
 
-    // Set session variables for the user
-    HttpContext.Session.SetInt32("UserId", user.Id);
-    HttpContext.Session.SetString("UserName", user.UserName);
-    HttpContext.Session.SetInt32("RoleId", user.RoleId);
+//     // Set session variables for the user
+//     HttpContext.Session.SetInt32("UserId", user.Id);
+//     HttpContext.Session.SetString("UserName", user.UserName);
+//     HttpContext.Session.SetInt32("RoleId", user.RoleId);
 
-    // Redirect based on user role
-    if (user.RoleId == 1 || user.RoleId == 3)
-    {
-        return RedirectToAction("AdminDashboard");
-    }
-    else if (user.RoleId == 2)
-    {
-        return RedirectToAction("UserDashboard");
-    }
+//     // // Redirect based on user role
+//     // if (user.RoleId == 1 || user.RoleId == 3)
+//     // {
+//     //     return RedirectToAction("AdminDashboard");
+//     // }
+//     // else if (user.RoleId == 2)
+//     // {
+//     //     return RedirectToAction("UserDashboard");
+//     // }
 
-    ViewBag.ErrorMessage = "User role is not recognized. Please contact support.";
-    return View("OtpView");
-}
-
-
+//     ViewBag.ErrorMessage = "User role is not recognized. Please contact support.";
+//     return View("OtpView");
+// }
 
 
 
@@ -116,20 +123,22 @@ public IActionResult ValidateOtp(string otpInput)
 
 
 
-        private string GenerateOtp()
-        {
-            Random random = new Random();
-            return random.Next(100000, 999999).ToString();
-        }
+
+
+        // private string GenerateOtp()
+        // {
+        //     Random random = new Random();
+        //     return random.Next(100000, 999999).ToString();
+        // }
         public IActionResult Login()
         {
             return View();
         }
 
-        public IActionResult OtpView()
-        {
-            return View();
-        }
+        // public IActionResult OtpView()
+        // {
+        //     return View();
+        // }
 
 
 
@@ -162,91 +171,91 @@ public IActionResult ValidateOtp(string otpInput)
                 return View("Signup"); // Return to the signup view
             }
               // Generate OTP
-            string otp = GenerateOtp();
+            // string otp = GenerateOtp();
 
             // Log the OTP for debugging purposes
-            Console.WriteLine("OTP generated: " + otp);
+            // Console.WriteLine("OTP generated: " + otp);
 
             // Store user details in session (so they can be accessed after OTP verification)
             HttpContext.Session.SetString("UserName", UserName);
             HttpContext.Session.SetString("Email", Email);
             HttpContext.Session.SetString("Password", Password);
             HttpContext.Session.SetInt32("RoleId", RoleId);
-            HttpContext.Session.SetString("Otp", otp);
+            // HttpContext.Session.SetString("Otp", otp);
 
             // Send OTP to email
-            try
-            {
-                _emailService.SendOtpEmail(Email, otp);
-                TempData["SuccessMessage"] = $"OTP has been sent to {Email}.";
-            }
-            catch (Exception ex)
-            {
-                ViewBag.ErrorMessage = "There was an error sending the OTP email. Please try again.";
-                return View("Signup");
-            }
-
-            // Redirect to OTP verification view
-            return RedirectToAction("OtpRegView");
-
-            // var user = new User
+            // try
             // {
-            //     UserName = UserName,
-            //     Email = Email,
-            //     Password = Password, // Store plain text as per your preference
-            //     RoleId = 2,
-            //     IsActive = true
-            // };
+            //     _emailService.SendOtpEmail(Email, otp);
+            //     TempData["SuccessMessage"] = $"OTP has been sent to {Email}.";
+            // }
+            // catch (Exception ex)
+            // {
+            //     ViewBag.ErrorMessage = "There was an error sending the OTP email. Please try again.";
+            //     return View("Signup");
+            // }
 
-            // _context.Users.Add(user);
-            // _context.SaveChanges();
+            // // Redirect to OTP verification view
+            // return RedirectToAction("OtpRegView");
 
-            // return RedirectToAction("Login"); // Redirect to login after successful registration
-        }
-        [HttpPost]
-        public IActionResult ValidateRegistrationOtp(string otpInput)
-        {
-            // Retrieve stored OTP and user details from session
-            string storedOtp = HttpContext.Session.GetString("Otp");
-            string storedEmail = HttpContext.Session.GetString("Email");
-            string storedUserName = HttpContext.Session.GetString("UserName");
-            string storedPassword = HttpContext.Session.GetString("Password");
-            int? storedRoleId = HttpContext.Session.GetInt32("RoleId");
-
-            // Check if OTP matches
-            if (storedOtp != otpInput)
-            {
-                ViewBag.ErrorMessage = "Invalid OTP. Please try again.";
-                return View("OtpRegView");
-            }
-
-            // Check if user details exist in the session
-            if (storedEmail == null || storedUserName == null || storedPassword == null || storedRoleId == null)
-            {
-                ViewBag.ErrorMessage = "Error processing registration. Please try again.";
-                return View("OtpRegView");
-            }
-
-            // Now create the user in the database
             var user = new User
             {
-                UserName = storedUserName,
-                Email = storedEmail,
-                Password = storedPassword, // Assuming plain text, adjust to hash if needed
-                // RoleId = storedRoleId.Value,
-                IsActive = true,
-                RoleId = 2
+                UserName = UserName,
+                Email = Email,
+                Password = Password, // Store plain text as per your preference
+                RoleId = 2,
+                IsActive = true
             };
 
             _context.Users.Add(user);
             _context.SaveChanges();
 
-            // Clear session after successful registration
-            HttpContext.Session.Clear();
-
-            // Return success response
-    return Json(new { success = true, message = "Successfully created the account!" });
+            return RedirectToAction("Login"); // Redirect to login after successful registration
         }
+    //     [HttpPost]
+    //     public IActionResult ValidateRegistrationOtp(string otpInput)
+    //     {
+    //         // Retrieve stored OTP and user details from session
+    //         string storedOtp = HttpContext.Session.GetString("Otp");
+    //         string storedEmail = HttpContext.Session.GetString("Email");
+    //         string storedUserName = HttpContext.Session.GetString("UserName");
+    //         string storedPassword = HttpContext.Session.GetString("Password");
+    //         int? storedRoleId = HttpContext.Session.GetInt32("RoleId");
+
+    //         // Check if OTP matches
+    //         if (storedOtp != otpInput)
+    //         {
+    //             ViewBag.ErrorMessage = "Invalid OTP. Please try again.";
+    //             return View("OtpRegView");
+    //         }
+
+    //         // Check if user details exist in the session
+    //         if (storedEmail == null || storedUserName == null || storedPassword == null || storedRoleId == null)
+    //         {
+    //             ViewBag.ErrorMessage = "Error processing registration. Please try again.";
+    //             return View("OtpRegView");
+    //         }
+
+    //         // Now create the user in the database
+    //         var user = new User
+    //         {
+    //             UserName = storedUserName,
+    //             Email = storedEmail,
+    //             Password = storedPassword, // Assuming plain text, adjust to hash if needed
+    //             // RoleId = storedRoleId.Value,
+    //             IsActive = true,
+    //             RoleId = 2
+    //         };
+
+    //         _context.Users.Add(user);
+    //         _context.SaveChanges();
+
+    //         // Clear session after successful registration
+    //         HttpContext.Session.Clear();
+
+    //         // Return success response
+    // return Json(new { success = true, message = "Successfully created the account!" });
+    //     }
 
         // Sample method to generate an OTP
 
@@ -259,6 +268,10 @@ public IActionResult ValidateOtp(string otpInput)
         {
             var name = HttpContext.Session.GetString("UserName") ?? "";
             ViewBag.Message = name;
+
+            var role = HttpContext.Session.GetInt32("RoleId") ?? 0;
+            ViewBag.RoleId = role;
+
 
             // Get the current user ID from session
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -273,6 +286,8 @@ public IActionResult ValidateOtp(string otpInput)
             {
                 return NotFound(); // Handle user not found
             }
+
+
 
             IEnumerable<Project> ongoingProjects;
             IEnumerable<Project> completedProjects;
@@ -311,6 +326,8 @@ public IActionResult ValidateOtp(string otpInput)
         {
             var name = HttpContext.Session.GetString("UserName") ?? "";
             ViewBag.Message = name;
+             var role = HttpContext.Session.GetInt32("RoleId") ?? 0;
+            ViewBag.RoleId = role;
 
             // Get the current user ID from session
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -543,6 +560,8 @@ public IActionResult ValidateOtp(string otpInput)
 
         public IActionResult AdminTask()
         {
+             var role = HttpContext.Session.GetInt32("RoleId") ?? 0;
+            ViewBag.RoleId = role;
             var name = HttpContext.Session.GetString("UserName") ?? "";
             ViewBag.Message = name;
             var model = new AdminTasksViewModel
@@ -604,6 +623,8 @@ public IActionResult ValidateOtp(string otpInput)
 
         public IActionResult AdminUser()
         {
+             var role = HttpContext.Session.GetInt32("RoleId") ?? 0;
+            ViewBag.RoleId = role;
             var name = HttpContext.Session.GetString("UserName") ?? "";
             ViewBag.Message = name;
 
@@ -633,59 +654,45 @@ public IActionResult ValidateOtp(string otpInput)
         }
 
 
-        [HttpPost]
-        public IActionResult UpdateUser(User updatedUser)
-        {
-            var user = _context.Users.Find(updatedUser.Id);
+  [HttpPost]
+public IActionResult UpdateUser(User updatedUser)
+{
+    // Fetch the user from the database
+    var existingUser = _context.Users
+        .Include(u => u.Projects) // Include projects to check their status
+        .FirstOrDefault(u => u.Id == updatedUser.Id);
 
-            if (user == null)
-            {
-                return Json(new { success = false, message = "User not found." });
-            }
+    if (existingUser == null)
+    {
+        return Json(new { status = "Error", message = "User not found." });
+    }
 
-            // Track which fields are being updated
-            bool isUserNameUpdated = user.UserName != updatedUser.UserName;
-            bool isRoleOrIsActiveUpdated = user.RoleId != updatedUser.RoleId || user.IsActive != updatedUser.IsActive;
+    // Check if the user being updated is setting status to inactive
+    if (!updatedUser.IsActive && existingUser.Projects.Any(p => p.Tasks.Any(t => t.Status == TaskStatus.InProgress)))
+    {
+        return Json(new { status = "Error", message = "Cannot set user to inactive while they have ongoing projects." });
+    }
 
-            // Check if the user is involved in any in-progress projects
-            bool hasInProgressProjects = _context.Projects
-                .Any(p => p.Users.Any(u => u.Id == user.Id) && p.Status == ProjectStatus.InProgress);
+    else{
+    existingUser.RoleId = updatedUser.RoleId;
+    existingUser.IsActive = updatedUser.IsActive;
 
-            // Case 1: If both UserName and Role/IsActive are being updated together, block the update
-            if (isUserNameUpdated && isRoleOrIsActiveUpdated)
-            {
-                return Json(new { success = false, message = "You cannot update both the name and role or active status at the same time." });
-            }
+    _context.SaveChanges();
 
-            // Case 2: If Role or IsActive is being updated while user has in-progress projects, block the update
-            if (isRoleOrIsActiveUpdated && hasInProgressProjects)
-            {
-                return Json(new { success = false, message = "You cannot update the role or active status while the user is part of in-progress projects." });
-            }
+    return Json(new { status = "Success", message = "User updated successfully." });
+    }
+}
 
-            // Apply updates only if no conflicts exist
-            if (isUserNameUpdated)
-            {
-                // Only UserName is updated
-                user.UserName = updatedUser.UserName;
-            }
 
-            if (isRoleOrIsActiveUpdated)
-            {
-                // Only Role or IsActive is updated
-                user.RoleId = updatedUser.RoleId;
-                user.IsActive = updatedUser.IsActive;
-            }
 
-            // Save changes only if a valid update was made
-            if (isUserNameUpdated || isRoleOrIsActiveUpdated)
-            {
-                _context.SaveChanges();
-                return Json(new { success = true, message = "User updated successfully." });
-            }
 
-            return Json(new { success = false, message = "No changes were made." });
-        }
+
+
+
+
+
+
+
 
 
 
@@ -700,6 +707,8 @@ public IActionResult ValidateOtp(string otpInput)
 
         public IActionResult AdminCompleted()
         {
+             var role = HttpContext.Session.GetInt32("RoleId") ?? 0;
+            ViewBag.RoleId = role;
             var name = HttpContext.Session.GetString("UserName") ?? "";
             ViewBag.Message = name;
 
@@ -720,6 +729,9 @@ public IActionResult ValidateOtp(string otpInput)
         {
             var name = HttpContext.Session.GetString("UserName") ?? "";
             ViewBag.Message = name;
+
+             var role = HttpContext.Session.GetInt32("RoleId") ?? 0;
+            ViewBag.RoleId = role;
 
             // Get the current user's ID from the session
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -751,6 +763,9 @@ public IActionResult ValidateOtp(string otpInput)
 
        public IActionResult UserProject()
 {
+
+     var role = HttpContext.Session.GetInt32("RoleId") ?? 0;
+            ViewBag.RoleId = role;
     var name = HttpContext.Session.GetString("UserName") ?? "";
     ViewBag.Message = name;
     var userId = HttpContext.Session.GetInt32("UserId");
@@ -784,6 +799,9 @@ public IActionResult ValidateOtp(string otpInput)
 
         public IActionResult UserTask()
         {
+
+             var role = HttpContext.Session.GetInt32("RoleId") ?? 0;
+            ViewBag.RoleId = role;
             var name = HttpContext.Session.GetString("UserName") ?? "";
             ViewBag.Message = name;
             // Get the current user ID from the session

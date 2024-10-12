@@ -21,6 +21,14 @@
       "PackagePath": "staticwebassets\\img\\3d-isometric-vr-game-headset-for-playing-video-games.gif"
     },
     {
+      "Id": "D:\\xampp4\\htdocs\\ASP.NET-Project\\wwwroot\\img\\Relo.png",
+      "PackagePath": "staticwebassets\\img\\Relo.png"
+    },
+    {
+      "Id": "D:\\xampp4\\htdocs\\ASP.NET-Project\\wwwroot\\img\\taskLogo.png",
+      "PackagePath": "staticwebassets\\img\\taskLogo.png"
+    },
+    {
       "Id": "D:\\xampp4\\htdocs\\ASP.NET-Project\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },
