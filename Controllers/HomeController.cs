@@ -15,11 +15,10 @@ namespace ASP.NET_Project.Controllers
         private readonly EmailService _emailService;
 
 
-        public HomeController(ApplicationDbContext context, ILogger<HomeController> logger, EmailService emailService)
+        public HomeController(ApplicationDbContext context, ILogger<HomeController> logger,)
         {
             _context = context;
             _logger = logger;
-            _emailService = emailService;
         }
 
 
